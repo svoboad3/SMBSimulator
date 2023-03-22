@@ -1,0 +1,22 @@
+{% extends "Layout.html" %}
+{% block title %}Main page{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block navbar %}
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-bluee" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+  </div>
+</div>
+{% endblock %}
+{% block body %}
+<!-- Header -->
+<header class="w3-container siemens-blue w3-center" style="padding:128px 16px">
+  <h1 class="w3-margin w3-jumbo">Get started</h1>
+  <a type="button" href="{{ url_for('get_SMB') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">Start</a><br>
+  <a type="button" href="{{ url_for('get_import') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">Import</a>
+</header>
+{% endblock %}

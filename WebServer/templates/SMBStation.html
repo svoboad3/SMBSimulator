@@ -1,0 +1,185 @@
+{% extends "Layout.html" %}
+{% block title %}Upload{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/form.css') }}">
+{% endblock %}
+{% block navbar %}
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">SMB Station</a>
+    {% if running %}
+      <a href="{{ url_for('get_components') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Components</a>
+      <a href="{{ url_for('get_simulation') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block body %}
+<!-- First Grid -->
+<div id="overlay" onclick="off('column')">
+</div>
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+     {% if running %}
+     <h1>SMB configuration</h1>
+     {% else %}
+     <h1>Create initial SMB configuration</h1>
+     {% endif %}
+      <div class="zones">
+      {% for key, value in stationInfo.items() %}
+        {% if value %}
+            <div class="zoneInfo">
+            <h3>Initial Zone {{key}}</h3>
+            {% for info in value %}
+                <div class="columnInfo">
+                 {% if not running %}
+                    <button id="deleteCol" onclick="deleteColumn('{{key}}', '{{loop.index0}}')">&cross;</button>
+                 {% endif %}
+                {% for key2, value2 in info.items() %}
+                    <span>{{key2}}: {{value2}}</span><br>
+                {% endfor %}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+      {% endfor %}
+      </div>
+      {% if not running %}
+      <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="on('column')">Add column</button>
+      {% endif %}
+      <form  action="{{ url_for('post_create_SMB') }}" method="post" class="form-style-1">
+            <h4>Flow rates [mL/h]<i class="fa fa-question-circle popup" onmouseenter="showPopup('zoneExp2')" onmouseleave="showPopup('zoneExp2')">
+                    <span class="popuptext" id="zoneExp2">
+                        zone 1 - after desorbent<br>
+                        zone 2 - after extract<br>
+                        zone 3 - after feed<br>
+                        zone 4 - after raffinate<br>
+                    </span>
+                </i>
+            </h4>
+            <label for="flowRate1">Zone 1</label>
+            <input type="number" id="flowRate1" name="flowRate1" min="0.01" step="any" required><br>
+            <label for="flowRate2">Zone 2</label>
+            <input type="number" id="flowRate2" name="flowRate2" min="0.01" step="any" required><br>
+            <label for="flowRate3">Zone 3</label>
+            <input type="number" id="flowRate3" name="flowRate3" min="0.01" step="any" required><br>
+            <label for="flowRate4">Zone 4</label>
+            <input type="number" id="flowRate4" name="flowRate4" min="0.01" step="any" required><br><br>
+            <label for="switchInterval">Switch interval [s]</label>
+            <input type="number" id="switchInterval" name="switchInterval" min="0.01" step="any" required><br><br>
+                      <label for="dt">
+                dt <i class="fa fa-question-circle popup" onmouseenter="showPopup('dtExp')" onmouseleave="showPopup('dtExp')">
+                    <span class="popuptext" id="dtExp">
+                        length of time step in seconds
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="dt" name="dt" min="0.01" step="any" required><br><br>
+            <label for="Nx">
+                Nx <i class="fa fa-question-circle popup" onmouseenter="showPopup('NxExp')" onmouseleave="showPopup('NxExp')">
+                    <span class="popuptext" id="NxExp">
+                        number of spatial differences
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="Nx" name="Nx" min="1" step="1" required><br><br>
+              {% if readyNext and not running %}
+                <input type="submit" value="Continue" class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round"/>
+              {% endif %}
+      </form>
+
+    </div>
+</div>
+<div id="column">
+        <button id="cross" onclick="off('column')">&cross;</button>
+        <form action="{{ url_for('post_add_column') }}" method="post" class="form-style-1">
+            <label for="zone">
+                Zone <i class="fa fa-question-circle popup" onmouseenter="showPopup('zoneExp')" onmouseleave="showPopup('zoneExp')">
+                    <span class="popuptext" id="zoneExp">
+                        zone 1 - after desorbent<br>
+                        zone 2 - after extract<br>
+                        zone 3 - after feed<br>
+                        zone 4 - after raffinate<br>
+                    </span>
+                </i>
+            </label>
+            <select name="zone" id="zone">
+              <option value="1" {% if formInfo and formInfo['zone'] == 1 %}selected{% endif %}>1</option>
+              <option value="2" {% if formInfo and formInfo['zone'] == 2 %}selected{% endif %}>2</option>
+              <option value="3" {% if formInfo and formInfo['zone'] == 3 %}selected{% endif %}>3</option>
+              <option value="4" {% if formInfo and formInfo['zone'] == 4 %}selected{% endif %}>4</option>
+              <option value="5" {% if formInfo and formInfo['zone'] == 5 %}selected{% endif %}>All</option>
+            </select><br><br>
+            <label for="isotherm">
+                Isotherm for EDM model
+            </label>
+            <select name="isotherm" id="isotherm">
+              <option value="Lin" {% if formInfo and formInfo['isotherm'] == Lin %}selected{% endif %}>Linear</option>
+              <option value="Nonlin" {% if formInfo and formInfo['isotherm'] == Nonlin %}selected{% endif %}>Noncompetetive Langmuir</option>
+            </select><br><br>
+            <label for="colLength">Column length [mm]</label>
+            <input type="number" id="colLength" name="colLength" min="0.01" step="any" required><br><br>
+            <label for="colDiameter">Column diameter [mm]</label>
+            <input type="number" id="colDiameter" name="colDiameter" min="0.01" step="any" required><br><br>
+            <label for="porosity">Porosity</label>
+            <input type="number" id="porosity" name="porosity" min="0.01" max="1" step="any" required><br><br>
+            <label for="deadVol">
+                Dead volume <i class="fa fa-question-circle popup" onmouseenter="showPopup('deadVolExp')" onmouseleave="showPopup('deadVolExp')">
+                    <span class="popuptext" id="deadVolExp">
+                        adds a "Tube" before this Column
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="deadVol" name="deadVol" min="0.01" step="any" required><br><br>
+            <input type="submit" value="Add" id="btn" class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round"/>
+        </form>
+    </div>
+<script type="text/javascript">
+    {% if formInfo %}
+        {% if formInfo['colLength'] %}
+            document.getElementById("colLength").value = {{formInfo['colLength']}}
+        {% endif %}
+        {% if formInfo['colDiameter'] %}
+            document.getElementById("colDiameter").value = {{formInfo['colDiameter']}}
+        {% endif %}
+        {% if formInfo['porosity'] %}
+            document.getElementById("porosity").value = {{formInfo['porosity']}}
+        {% endif %}
+        {% if formInfo['deadVol'] %}
+            document.getElementById("deadVol").value = {{formInfo['deadVol']}}
+        {% endif %}
+        {% if formInfo['flowRate1'] %}
+            document.getElementById("flowRate1").value = {{formInfo['flowRate1']}}
+            document.getElementById("flowRate1").setAttribute("readonly", "")
+        {% endif %}
+        {% if formInfo['flowRate2'] %}
+            document.getElementById("flowRate2").value = {{formInfo['flowRate2']}}
+            document.getElementById("flowRate2").setAttribute("readonly", "")
+        {% endif %}
+        {% if formInfo['flowRate3'] %}
+            document.getElementById("flowRate3").value = {{formInfo['flowRate3']}}
+            document.getElementById("flowRate3").setAttribute("readonly", "")
+        {% endif %}
+        {% if formInfo['flowRate4'] %}
+            document.getElementById("flowRate4").value = {{formInfo['flowRate4']}}
+            document.getElementById("flowRate4").setAttribute("readonly", "")
+        {% endif %}
+        {% if formInfo['switchInterval'] %}
+            document.getElementById("switchInterval").value = {{formInfo['switchInterval']}}
+            document.getElementById("switchInterval").setAttribute("readonly", "")
+        {% endif %}
+        {% if formInfo['dt'] %}
+            document.getElementById("dt").value = {{formInfo['dt']}}
+            document.getElementById("dt").setAttribute("readonly", "")
+        {% endif %}
+        {% if formInfo['Nx'] %}
+            document.getElementById("Nx").value = {{formInfo['Nx']}}
+            document.getElementById("Nx").setAttribute("readonly", "")
+        {% endif %}
+    {% endif %}
+</script>
+{% endblock %}

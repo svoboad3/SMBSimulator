@@ -1,0 +1,121 @@
+{% extends "Layout.html" %}
+{% block title %}Upload{% endblock %}
+{% block head %}
+    {{ super() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+{% block navbar %}
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    <a href="{{ url_for('get_SMB') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
+    <a href="{{ url_for('get_components') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Components</a>
+    <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Simulation</a>
+  </div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="getExport('{{exportLink}}')">Export Settings</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="deleteSim()">Delete Sim</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="stopPrint()" id="pauseBtn">Pause</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="startPrint()" id="startBtn" style="display: none;">Start</button>
+      <div id="zone1" class="zone"><h3>Zone 1</h3></div>
+      <div id="zone2" class="zone"><h3>Zone 2</h3></div>
+      <div id="zone3" class="zone"><h3>Zone 3</h3></div>
+      <div id="zone4" class="zone"><h3>Zone 4</h3></div>
+  </div>
+</div>
+<script type="text/javascript">
+    let colorList = ['rgb(255, 0, 0)', 'rgb(0, 0, 255)', 'rgb(0, 255, 0)', 'rgb(255, 255, 0)', 'rgb(255, 0, 255)',
+                     'rgb(0, 255, 255)', 'rgb(100, 100, 100)', 'rgb(120, 120, 0)', 'rgb(120, 0, 120)', 'rgb(0, 120, 120)' ]
+    let dataQueue = []
+    let compNames = []
+    let charts = []
+    function initCanvases(dataSample){
+        console.log('calling initCanvases')
+        let divs = document.getElementsByClassName('zone')
+        for(let i = 0; i < 4; i++){
+            charts.push([])
+            for(let j = 0; j < dataSample[i+1].length; j++){
+                let newDiv = document.createElement("div")
+                newDiv.classList.add("chart-container")
+                if(j%2 == 0)
+                    newDiv.style = "height:100%; width:40%; float:left;"
+                else if(j%2 == 1)
+                    newDiv.style = "height:100%; width:60%; float:left;"
+                let newCanvas = document.createElement("canvas")
+                newCanvas.classList.add("chart")
+                newDiv.appendChild(newCanvas)
+                divs[i].appendChild(newDiv)
+                charts[i].push(new Chart(newCanvas, {
+                                labels: [],
+                                datasets: [],
+                                options: {
+                                  scales: {
+                                    y: {
+                                      beginAtZero: true,
+                                      suggestedMax: 0.05
+                                    }
+                                  }
+                                }
+                                }))
+            }
+        }
+    }
+    async function getData(link){
+        if(dataQueue.length < 200){
+            let response = await fetch(link)
+            let content = await response.json()
+            let data = content['data']
+            compNames = content['compList']
+            if(charts.length == 0)
+                initCanvases(data[0])
+            for(let i=0; i < data.length; i++){
+                dataQueue.push(data[i])
+            }
+        }
+    }
+    function printData(){
+        if(dataQueue.length > 0){
+            let data = dataQueue.shift();
+            for(let i=1; i < Object.keys(data).length+1; i++){
+                for(let j=0; j < data[i].length; j++){
+                    if(charts[i-1][j].data.labels.length != data[i][j].length){
+                        charts[i-1][j].data.labels = [...Array(data[i][j][0].length).keys()]
+                    }
+                    for(let k=0; k < data[i][j].length; k++){
+                        if(charts[i-1][j].data.datasets.length > k){
+                            charts[i-1][j].data.datasets[k].data = data[i][j][k]
+                        }
+                        else{
+                            charts[i-1][j].data.datasets.push({
+                                                        label: compNames[k],
+                                                        type: 'line',
+                                                        data: data[i][j][k],
+                                                        borderColor: colorList[k]
+                                                    })
+                        }
+                    }
+                    charts[i-1][j].update()
+                }
+            }
+        }
+    }
+    setInterval(getData, 1000, '{{dataLink}}')
+    let printHandler = setInterval(printData, 50)
+    function stopPrint(){
+        clearInterval(printHandler)
+        document.getElementById("pauseBtn").style.display = "none"
+        document.getElementById("startBtn").style.display = "inline-block"
+    }
+    function startPrint(){
+        printHandler = setInterval(printData, 50)
+        document.getElementById("pauseBtn").style.display = "inline-block"
+        document.getElementById("startBtn").style.display = "none"
+    }
+</script>
+{% endblock %}
