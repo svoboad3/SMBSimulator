@@ -1,0 +1,185 @@
+{% extends "Layout.html" %}
+{% block title %}Upload{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/form.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+{% block navbar %}
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    <a href="{{ url_for('get_SMB') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
+    <a href="{{ url_for('get_components') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Components</a>
+    <a href="{{ url_for('get_SMB_config') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation Configuration</a>
+    <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Simulation</a>
+    <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white bar-right">Logout</a>
+  </div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="getExport('{{url_for('get_export')}}')">Export Settings</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="deleteSim('{{url_for('delete_simulation_data')}}')">Delete Sim</button>
+      <div id="info" class="info"></div>
+      <div id="output" class="output"><h3>Simulation Output</h3></div>
+      <div id="zone1" class="zone"><h3>Zone 1</h3></div>
+      <div id="zone2" class="zone"><h3>Zone 2</h3></div>
+      <div id="zone3" class="zone"><h3>Zone 3</h3></div>
+      <div id="zone4" class="zone"><h3>Zone 4</h3></div>
+  </div>
+</div>
+<script type="text/javascript">
+    let outputLabels = []
+    let colorList = ['rgb(255, 0, 0)', 'rgb(0, 0, 255)', 'rgb(0, 255, 0)', 'rgb(255, 255, 0)', 'rgb(255, 0, 255)',
+                     'rgb(0, 255, 255)', 'rgb(255, 120, 0)', 'rgb(255, 0, 120)', 'rgb(120, 0, 255)' ]
+    let data = []
+    let compNames = []
+    let charts = []
+    let outputCharts = []
+    function initCanvases(dataSample){
+        console.log('calling initCanvases')
+        let divs = document.getElementsByClassName('zone')
+        for(let i = 0; i < 4; i++){
+            charts.push([])
+            for(let j = 0; j < dataSample["final"][i+1].length; j++){
+                let newDiv = document.createElement("div")
+                newDiv.classList.add("chart-container")
+                if(j%2 == 0)
+                    newDiv.style = "height:100%; width:40%; float:left;"
+                else if(j%2 == 1)
+                    newDiv.style = "height:100%; width:60%; float:left;"
+                let newCanvas = document.createElement("canvas")
+                newCanvas.classList.add("chart")
+                newDiv.appendChild(newCanvas)
+                divs[i].appendChild(newDiv)
+                charts[i].push(new Chart(newCanvas, {
+                                labels: [],
+                                datasets: [],
+                                options: {
+                                    spanGaps: true,
+                                    datasets: {
+                                        line: {
+                                            pointRadius: 0
+                                            }
+                                    },
+                                  scales: {
+                                    y: {
+                                      beginAtZero: true,
+                                      suggestedMax: 0.05
+                                    }
+                                  }
+                                }
+                                }))
+            }
+        }
+        let outputDiv = document.getElementById('output')
+        let outputNames = ["Extract", "Raffinate"]
+        for(let i = 0; i < 2; i++){
+            let newDiv = document.createElement("div")
+            newDiv.classList.add("chart-container")
+            newDiv.style = "height:100%; width:50%; float:left;"
+            let newCanvas = document.createElement("canvas")
+            newCanvas.classList.add("chart")
+            newDiv.appendChild(newCanvas)
+            outputDiv.appendChild(newDiv)
+            outputCharts.push(new Chart(newCanvas, {
+                            labels: [],
+                            datasets: [],
+                            options: {
+                                spanGaps: true,
+                                datasets: {
+                                    line: {
+                                        pointRadius: 0
+                                        }
+                                },
+                              scales: {
+                                y: {
+                                  beginAtZero: true,
+                                  suggestedMax: 0.05
+                                }
+                              },
+                              plugins: {
+                                title: {
+                                    display: true,
+                                    text: outputNames[i]
+                                    }
+                                }
+                            }
+                            }))
+        }
+    }
+    async function getData(link){
+        let response = await fetch(link)
+        let content = await response.json()
+        data = content['data']
+        compNames = content['compList']
+        outputLabels = content['labels']
+        if(charts.length == 0)
+            initCanvases(data)
+        printData()
+    }
+    function printData(){
+        let infoDiv = document.getElementById("info")
+        for(let i = 0; i < compNames.length; i++){
+            infoDiv.innerHTML += '<p>Avg purity of ' + compNames[i] + ' in Extract = ' + data['purities']['extract'][i].to_fixed(2) +
+                                 '%&emsp;&emsp;&emsp;&emsp;&emsp;Avg purity of ' + compNames[i] + ' in Raffinate = ' + data['purities']['raffinate'][i].to_fixed(2) + '%</p>'
+        }
+        infoDiv.innerHTML += '<br>'
+        for(let i = 0; i < compNames.length; i++){
+            infoDiv.innerHTML += '<p>Avg yield of ' + compNames[i] + ' in Extract = ' + data['yields']['extract'][i].to_fixed(2) +
+                                 '%&emsp;&emsp;&emsp;&emsp;&emsp;Avg yield of ' + compNames[i] + ' in Raffinate = ' + data['yields']['raffinate'][i].to_fixed(2) + '%</p>'
+        }
+        for(let i=1; i < Object.keys(data["final"]).length+1; i++){
+            for(let j=0; j < data["final"][i].length; j++){
+                if(charts[i-1][j].data.labels.length != data["final"][i][j].length){
+                    charts[i-1][j].data.labels = [...Array(data["final"][i][j][0].length).keys()]
+                }
+                for(let k=0; k < data["final"][i][j].length; k++) {
+                    if (charts[i - 1][j].data.datasets.length > k) {
+                        charts[i - 1][j].data.datasets[k].data = data["final"][i][j][k]
+                    } else {
+                        charts[i - 1][j].data.datasets.push({
+                            label: compNames[k],
+                            type: 'line',
+                            data: data["final"][i][j][k],
+                            borderColor: colorList[k]
+                        })
+                    }
+                    if (j == 0) {
+                        if (outputCharts[0].data.datasets.length > k) {
+                            outputCharts[0].data.datasets[k].data = data["extract"][k]
+                        } else {
+                            outputCharts[0].data.datasets.push({
+                                label: compNames[k],
+                                type: 'line',
+                                data: data["extract"][k],
+                                borderColor: colorList[k]
+                            })
+                        }
+                        if (outputCharts[1].data.datasets.length > k) {
+                            outputCharts[1].data.datasets[k].data = data["raffinate"][k]
+                        } else {
+                            outputCharts[1].data.datasets.push({
+                                label: compNames[k],
+                                type: 'line',
+                                data: data["raffinate"][k],
+                                borderColor: colorList[k]
+                            })
+                        }
+                        outputCharts[0].data.labels = outputLabels
+                        outputCharts[1].data.labels = outputLabels
+                    }
+                }
+                charts[i-1][j].update()
+            }
+        }
+        outputCharts[0].update()
+        outputCharts[1].update()
+    }
+    getData('{{ url_for("get_simulation_offline_data") }}')
+</script>
+{% endblock %}

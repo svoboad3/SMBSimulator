@@ -20,3 +20,8 @@ class GenericColumn:
         info["Diameter"] = self.diameter
         info["Porority"] = self.porosity
         return info
+
+    def deepCopy(self):
+        copy = GenericColumn(self.length, self.diameter, self.porosity)
+        copy.columnType = self.columnType
+        return copy

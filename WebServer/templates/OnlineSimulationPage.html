@@ -1,0 +1,472 @@
+{% extends "Layout.html" %}
+{% block title %}Upload{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/form.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+{% endblock %}
+{% block navbar %}
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    {% if auth %}
+    <a href="{{ url_for('get_SMB_online') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
+    <a href="{{ url_for('get_components_online') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Components</a>
+    <a href="{{ url_for('get_online_plcmaping') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">PLC Mapping</a>
+    {% endif %}
+    <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Simulation</a>
+    {% if auth %}
+    <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white bar-right">Logout</a>
+    {% else %}
+    <a href="{{ url_for('get_login_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white bar-right">Login</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block body %}
+<div id="overlay" onclick="off('changeDiv');">
+</div>
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+        {% if auth %}
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="deleteSim('{{url_for('delete_simulation_data')}}')">Delete Sim</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="on('changeDiv')" id="changeBtn">Change Settings</button>
+        {% endif %}
+      <div id="simdata" class="output"><h3>Simulation Output</h3><div id="simstate"></div><div id="horizoninfo" class="info"></div><div id="simdatainfo" class="info"></div></div>
+      <div id="livedata" class="output"><h3>Live Output
+      <span id="ConnectionYes" class="green">
+        <i class="fa fa-circle popup" onmouseenter="showPopup('connected')" onmouseleave="showPopup('connected')">
+        <span class="popuptext" id="connected">
+            Dataservice connection established
+        </span>
+        </i>
+      </span>
+      <span id="ConnectionNo" class="red" onmouseenter="showPopup('notConnected')" onmouseleave="showPopup('notConnected')">
+        <i class="fa fa-circle popup" onmouseenter="showPopup('notConnected')" onmouseleave="showPopup('notConnected')">
+        <span class="popuptext" id="notConnected">
+            Dataservice unreachable
+        </span>
+        </i>
+      </span></h3><div id="livestate"></div><div id="livedatainfo2"></div><div id="livedatainfo" class="info"></div></div>
+  </div>
+</div>
+<div id="changeDiv" class="overlayform">
+    <button class="cross" onclick="off('changeDiv')">&cross;</button>
+    <form action="{{ url_for('post_simulation_change_online') }}" method="post" class="form-style-1" id="changeForm" target="hiddenFrame">
+        <div class="insideWindow" style="display: flex; width: 100%" >
+        <div style="float: left; width: 50%;">
+            <label for="flowRateEluent">Flow Rate Eluent [mL/h]</label>
+            <input type="number" id="flowRateEluent" name="flowRateEluent" min="0.01" step="any" required><br><br>
+            <label for="flowRateExtract">Flow Rate Extract [mL/h]</label>
+            <input type="number" id="flowRateExtract" name="flowRateExtract" min="0.01" step="any" required><br><br>
+            <label for="flowRateFeed">Flow Rate Feed [mL/h]</label>
+            <input type="number" id="flowRateFeed" name="flowRateFeed" min="0.01" step="any" required><br><br>
+            <label for="flowRateRaffinate">Flow Rate Raffinate [mL/h]</label>
+            <input type="number" id="flowRateRaffinate" name="flowRateRaffinate" min="0.01" step="any" required><br><br>
+            <label for="flowRateRecycle">Flow Rate Recycle [mL/h]</label>
+            <input type="number" id="flowRateRecycle" name="flowRateRecycle" min="0.01" step="any" required><br><br>
+            <label for="switch">Switch Interval [s]</label>
+            <input type="number" id="switch" name="switch" min="0.01" step="any" required><br><br>
+        </div>
+        <div style="float: left; width: 50%;">
+            {% for comp, info in compInfo.items() %}
+            <label for="feedConc{{comp}}">Concentration of {{comp}}</label>
+            <input type="number" id="feedConc{{comp}}" name="feedConc{{comp}}" min="0.01" step="any" required value="{{info['Feed Concentration']}}"><br><br>
+            {% endfor %}
+        </div>
+        </div>
+    </form>
+    <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="postForm('changeForm', '{{ url_for('post_simulation_change_online') }}'); off('changeDiv'); document.getElementById('changeBtn').style.display = 'none';">Change</button>
+    <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="postForm('changeForm', '{{ url_for('post_simulation_force_change_online') }}'); off('changeDiv');">Force Change</button>
+</div>
+<iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+<script type="text/javascript">
+    let backhorizon = {{formInfo["backhorizon"]}}
+    let colorList = ['rgb(255, 0, 0)', 'rgb(0, 0, 255)', 'rgb(0, 255, 0)', 'rgb(255, 255, 0)', 'rgb(255, 0, 255)',
+                     'rgb(0, 255, 255)', 'rgb(255, 120, 0)', 'rgb(255, 0, 120)', 'rgb(120, 0, 255)' ]
+    let data = {}
+    let compNames = []
+    let outputCharts = []
+    let dataIntervalHandler
+    let purityAndYieldHandler
+    let simLabel = 0
+    let liveExtLabel = 0
+    let liveRafLabel = 0
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    function updateCharts(){
+        for(let i = 0; i < outputCharts.length; i++){
+            outputCharts[i].update()
+        }
+    }
+
+    function initCanvases(){
+        console.log('calling initCanvases')
+        let outputDivs = document.getElementsByClassName('output')
+        let outputNames = ["Extract", "Raffinate"]
+        for(let j = 0; j < outputDivs.length; j++) {
+            for (let i = 0; i < 2; i++) {
+                let newDiv = document.createElement("div")
+                newDiv.classList.add("chart-container")
+                newDiv.style = "height:100%; width:50%; float:left;"
+                let newCanvas = document.createElement("canvas")
+                newCanvas.classList.add("chart")
+                newDiv.appendChild(newCanvas)
+                outputDivs[j].appendChild(newDiv)
+                outputCharts.push(new Chart(newCanvas, {
+                    labels: [],
+                    datasets: [],
+                    options: {
+                        spanGaps: true,
+                        datasets: {
+                            line: {
+                                pointRadius: 0
+                                }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                suggestedMax: 0.05
+                            },
+                            x: {
+                                type: "linear",
+                                ticks: {
+                                    stepSize: 10
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: outputNames[i]
+                            }
+                        }
+                    }
+                }))
+            }
+        }
+    }
+    async function getInitData(link){
+        let response = await fetch(link)
+        let content = await response.json()
+        data = content
+        compNames = content['horizon']['compList']
+        if(outputCharts.length == 0)
+            await initCanvases()
+        printInitData()
+        dataIntervalHandler = setInterval(getData, {{formInfo['dt']}}*1000, "{{url_for('get_simulation_online_data')}}")
+        purityAndYieldHandler = setInterval(get_purity_and_yield, 20000, "{{url_for('get_simulation_online_purity_and_yield')}}")
+    }
+    async function getData(link){
+        let body = {}
+        body.liveExtLabels = []
+        for(let i = 0; i < outputCharts[2].data.datasets.length; i++) {
+            let lastLabel = outputCharts[2].data.datasets[i].data.slice(-1)[0]
+            if (lastLabel)
+                body.liveExtLabels.push(lastLabel.x)
+            else
+                body.liveExtLabels.push(0)
+        }
+        body.liveRafLabels = []
+        for(let i = 0; i < outputCharts[3].data.datasets.length; i++){
+            let lastLabel = outputCharts[3].data.datasets[i].data.slice(-1)[0]
+            if(lastLabel)
+                body.liveRafLabels.push(lastLabel.x)
+            else
+                body.liveRafLabels.push(0)
+        }
+        body.simLabel = simLabel
+        console.log(body)
+        let response = await fetch(link, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+        let content = await response.json()
+        console.log(content)
+        compNames = content['compList']
+        printData(content['data'], content['labels'])
+        printLiveData(content['livedata'])
+        printLiveInfo(content['liveInfo'])
+        updateCharts()
+        if(content["keepChangesAnswerRequest"]) {
+            clearInterval(dataIntervalHandler)
+            clearInterval(purityAndYieldHandler)
+            handle_keep_changes()
+        }
+    }
+
+    function printData(data, label){
+        document.getElementById("simstate").innerHTML = "Position:&emsp;" + data["state"] + "<br>Time to Switch:&emsp;" + data["timeToSwitch"] + "s"
+        for(let i = 0; i < data["raffinate"].length; i++){
+            outputCharts[0].data.datasets[i].data = outputCharts[0].data.datasets[i].data.concat(data["extract"][i])
+            outputCharts[1].data.datasets[i].data = outputCharts[1].data.datasets[i].data.concat(data["raffinate"][i])
+            outputCharts[0].data.datasets[i].data.splice(0, data["extract"][i].length)
+            outputCharts[1].data.datasets[i].data.splice(0, data["raffinate"][i].length)
+            /*if (outputCharts[2].data.datasets.length > i) {
+                outputCharts[2].data.datasets[i].data = outputCharts[2].data.datasets[i].data.concat(extVal)
+                outputCharts[2].data.datasets[i].data.splice(0, extVal.length)
+            } else {
+                outputCharts[2].data.datasets.push({
+                    label: compNames[i],
+                    type: 'line',
+                    data: extVal,
+                    borderColor: colorList[i]
+                })
+            }
+            if (outputCharts[3].data.datasets.length > i) {
+                outputCharts[3].data.datasets[i].data = outputCharts[3].data.datasets[i].data.concat(rafVal)
+                outputCharts[3].data.datasets[i].data.splice(0, rafVal.length)
+            } else {
+                outputCharts[3].data.datasets.push({
+                    label: compNames[i],
+                    type: 'line',
+                    data: rafVal,
+                    borderColor: colorList[i]
+                })
+            }*/
+        }
+        outputCharts[0].data.labels = outputCharts[0].data.labels.concat(label)
+        outputCharts[1].data.labels = outputCharts[1].data.labels.concat(label)
+        outputCharts[0].data.labels.splice(0, label.length)
+        outputCharts[1].data.labels.splice(0, label.length)
+        if(simLabel < outputCharts[0].data.labels.slice(-1)[0])
+            simLabel = outputCharts[0].data.labels.slice(-1)[0]
+        if(simLabel < outputCharts[1].data.labels.slice(-1)[0])
+            simLabel = outputCharts[1].data.labels.slice(-1)[0]
+    }
+    function printLiveData(data){
+        for(let i = 0; i < data["raffinate"].length; i++){
+            if (outputCharts[2].data.datasets.length > i) {
+                if(data["extractFormated"][i])
+                    outputCharts[2].data.datasets[i].data = outputCharts[2].data.datasets[i].data.concat(data["extractFormated"][i])
+                outputCharts[2].data.datasets[i].data = outputCharts[2].data.datasets[i].data.filter(datapoint => datapoint.x >= outputCharts[2].data.datasets[i].data[outputCharts[2].data.datasets[i].data.length-1].x-backhorizon)
+            } else {
+                if(data["extractFormated"][i])
+                    outputCharts[2].data.datasets.push({
+                        label: compNames[i],
+                        type: 'line',
+                        data: data["extractFormated"][i],
+                        borderColor: colorList[i]
+                })
+            }
+            if (outputCharts[3].data.datasets.length > i) {
+                if(data["raffinateFormated"][i])
+                    outputCharts[3].data.datasets[i].data = outputCharts[3].data.datasets[i].data.concat(data["raffinateFormated"][i])
+                outputCharts[3].data.datasets[i].data = outputCharts[3].data.datasets[i].data.filter(datapoint => datapoint.x >= outputCharts[3].data.datasets[i].data[outputCharts[3].data.datasets[i].data.length-1].x-backhorizon)
+            } else {
+                if(data["raffinateFormated"][i])
+                    outputCharts[3].data.datasets.push({
+                        label: compNames[i],
+                        type: 'line',
+                        data: data["raffinateFormated"][i],
+                        borderColor: colorList[i]
+                    })
+            }
+            if(data["extlabels"][compNames[i]]){
+                outputCharts[2].data.labels = outputCharts[2].data.labels.concat(data["extlabels"][compNames[i]])
+                outputCharts[2].data.labels = outputCharts[2].data.labels.filter(datapoint => datapoint >= outputCharts[2].data.labels[outputCharts[2].data.labels.length-1]-backhorizon)
+            }
+            if(data["raflabels"][compNames[i]]) {
+                outputCharts[3].data.labels = outputCharts[3].data.labels.concat(data["raflabels"][compNames[i]])
+                outputCharts[3].data.labels = outputCharts[3].data.labels.filter(datapoint => datapoint >= outputCharts[3].data.labels[outputCharts[3].data.labels.length - 1] - backhorizon)
+            }
+        }
+        outputCharts[2].data.labels = [...new Set(outputCharts[2].data.labels)].filter(label => label >= outputCharts[2].data.labels[outputCharts[2].data.labels.length-1]-backhorizon)
+        if(liveExtLabel < outputCharts[2].data.labels.slice(-1)[0])
+            liveExtLabel = outputCharts[2].data.labels.slice(-1)[0]
+        outputCharts[3].data.labels = [...new Set(outputCharts[3].data.labels)].filter(label => label >= outputCharts[3].data.labels[outputCharts[3].data.labels.length-1]-backhorizon)
+        if(liveRafLabel < outputCharts[3].data.labels.slice(-1)[0])
+            liveRafLabel = outputCharts[3].data.labels.slice(-1)[0]
+    }
+    function printInitData(){
+        for(let k=0; k < data['horizon']['data']["extract"].length; k++) {
+            if (outputCharts[0].data.datasets.length > k) {
+                outputCharts[0].data.datasets[k].data = data['simdata']['data']["extract"][k].concat(data['horizon']['data']["extract"][k])
+            } else {
+                outputCharts[0].data.datasets.push({
+                    label: compNames[k],
+                    type: 'line',
+                    data: data['simdata']['data']["extract"][k].concat(data['horizon']['data']["extract"][k]),
+                    borderColor: colorList[k]
+                })
+            }
+            if (outputCharts[1].data.datasets.length > k) {
+                outputCharts[1].data.datasets[k].data = data['simdata']['data']["raffinate"][k].concat(data['horizon']['data']["raffinate"][k])
+            } else {
+                outputCharts[1].data.datasets.push({
+                    label: compNames[k],
+                    type: 'line',
+                    data: data['simdata']['data']["raffinate"][k].concat(data['horizon']['data']["raffinate"][k]),
+                    borderColor: colorList[k]
+                })
+            }
+        }
+        outputCharts[0].data.labels = data['simdata']['labels'].concat(data['horizon']['labels'])
+        if(simLabel < outputCharts[0].data.labels.slice(-1)[0])
+            simLabel = outputCharts[0].data.labels.slice(-1)[0]
+        outputCharts[1].data.labels = data['simdata']['labels'].concat(data['horizon']['labels'])
+        if(simLabel < outputCharts[1].data.labels.slice(-1)[0])
+            simLabel = outputCharts[1].data.labels.slice(-1)[0]
+        for(let k=0; k < data['livedata']['data']["extractFormated"].length; k++) {
+            if (outputCharts[2].data.datasets.length > k) {
+                outputCharts[2].data.datasets[k].data = data['livedata']['data']["extractFormated"][k]
+            } else {
+                outputCharts[2].data.datasets.push({
+                    label: compNames[k],
+                    type: 'line',
+                    data: data['livedata']['data']["extractFormated"][k],
+                    borderColor: colorList[k]
+                })
+            }
+        }
+        for(let k=0; k < data['livedata']['data']["raffinateFormated"].length; k++) {
+            if (outputCharts[3].data.datasets.length > k) {
+                outputCharts[3].data.datasets[k].data = data['livedata']['data']["raffinateFormated"][k]
+            } else {
+                outputCharts[3].data.datasets.push({
+                    label: compNames[k],
+                    type: 'line',
+                    data: data['livedata']['data']["raffinateFormated"][k],
+                    borderColor: colorList[k]
+                })
+            }
+        }
+        for(let i = 0; i < compNames.length; i++){
+            outputCharts[2].data.labels = outputCharts[2].data.labels.concat(data['livedata']['extlabels'][compNames[i]])
+            outputCharts[3].data.labels = outputCharts[3].data.labels.concat(data['livedata']['raflabels'][compNames[i]])
+        }
+        outputCharts[2].data.labels = [...new Set(outputCharts[2].data.labels)]
+        if(liveExtLabel < outputCharts[2].data.labels.slice(-1)[0])
+            liveExtLabel = outputCharts[2].data.labels.slice(-1)[0]
+        outputCharts[3].data.labels = [...new Set(outputCharts[3].data.labels)]
+        if(liveRafLabel < outputCharts[3].data.labels.slice(-1)[0])
+            liveRafLabel = outputCharts[3].data.labels.slice(-1)[0]
+    }
+    async function get_purity_and_yield(link){
+        let response = await fetch(link)
+        let content = await response.json()
+        let infoDivs = document.getElementsByClassName('info')
+        for(let i = 0; i < infoDivs.length; i++){
+            let key = infoDivs[i].id.slice(0,-4)
+            resInnerHtml = ""
+            if(key === "horizon")
+                resInnerHtml += '<h5>Forwards Horizon</h5>'
+            else if(key === "simdata")
+                resInnerHtml += '<h5>Backwards Horizon</h5>'
+            for(let j = 0; j < compNames.length; j++) {
+                resInnerHtml += '<p>' + compNames[j] + ':<br>Purity in extract:&emsp;' + content["purity"][key]["extract"][j].toFixed(2) +
+                    '%&emsp;&emsp;&emsp;&emsp;&emsp;Purity in raffinate:&emsp;' + content["purity"][key]["raffinate"][j].toFixed(2) +
+                    '%<br>Yield of extract:&emsp;' + content["yield"][key]["extract"][j].toFixed(2) +
+                    '%&emsp;&emsp;&emsp;&emsp;&emsp;Yield of raffinate:&emsp;' + content["yield"][key]["raffinate"][j].toFixed(2) +'%</p>'
+            }
+            infoDivs[i].innerHTML = resInnerHtml
+        }
+    }
+    async function check_connection(link) {
+        let response = await fetch(link)
+        let content = await response.text()
+        if (content == "Yes"){
+            document.getElementById("ConnectionYes").style.display = "inline-block"
+            document.getElementById("ConnectionNo").style.display = "none"
+        }
+        else{
+            document.getElementById("ConnectionYes").style.display = "none"
+            document.getElementById("ConnectionNo").style.display = "inline-block"
+        }
+    }
+    getInitData('{{ url_for("get_simulation_online_init") }}')
+    setInterval(check_connection, 60000, '{{ url_for("get_dataservice_connection") }}')
+
+    {% if formInfo %}
+    {% if formInfo['flowRateEluent'] %}
+    document.getElementById("flowRateEluent").value = {{formInfo['flowRateEluent']}}
+    {% endif %}
+    {% if formInfo['flowRateExtract'] %}
+    document.getElementById("flowRateExtract").value = {{formInfo['flowRateExtract']}}
+    {% endif %}
+    {% if formInfo['flowRateFeed'] %}
+    document.getElementById("flowRateFeed").value = {{formInfo['flowRateFeed']}}
+    {% endif %}
+    {% if formInfo['flowRateRaffinate'] %}
+    document.getElementById("flowRateRaffinate").value = {{formInfo['flowRateRaffinate']}}
+    {% endif %}
+    {% if formInfo['flowRateRecycle'] %}
+    document.getElementById("flowRateRecycle").value = {{formInfo['flowRateRecycle']}}
+    {% endif %}
+    {% if formInfo['switchInterval'] %}
+    document.getElementById("switch").value = {{formInfo['switchInterval']}}
+    {% endif %}
+    {% endif %}
+    async function handle_keep_changes(){
+        {% if auth %}
+        let user_input = confirm("Keep changes made in horizon?");
+        if(user_input){
+            await fetch('{{ url_for("post_simulation_change_keep_online")}}', {"method": "POST"})
+        }
+        else{
+            let response = await fetch('{{ url_for("post_simulation_change_notkeep_online")}}', {"method": "POST"})
+            let content = await response.json()
+            let data = content["data"]
+            for(let k=0; k < data["extract"].length; k++) {
+                if (outputCharts[0].data.datasets.length > k) {
+                    outputCharts[0].data.datasets[k].data.splice(-data["extract"][k].length, data["extract"][k].length)
+                    outputCharts[0].data.datasets[k].data = outputCharts[0].data.datasets[k].data.concat(data["extract"][k])
+                } else {
+                    outputCharts[0].data.datasets.push({
+                        label: compNames[k],
+                        type: 'line',
+                        data: data["extract"][k],
+                        borderColor: colorList[k]
+                    })
+                }
+                if (outputCharts[1].data.datasets.length > k) {
+                    outputCharts[1].data.datasets[k].data.splice(-data["raffinate"][k].length, data["raffinate"][k].length)
+                    outputCharts[1].data.datasets[k].data = outputCharts[1].data.datasets[k].data.concat(data["raffinate"][k])
+                } else {
+                    outputCharts[1].data.datasets.push({
+                        label: compNames[k],
+                        type: 'line',
+                        data: data["raffinate"][k],
+                        borderColor: colorList[k]
+                    })
+                }
+            }
+            outputCharts[0].update()
+            outputCharts[1].update()
+        }
+        dataIntervalHandler = setInterval(getData, {{formInfo['dt']}}*1000, "{{url_for('get_simulation_online_data')}}")
+        purityAndYieldHandler = setInterval(get_purity_and_yield, 20000, "{{url_for('get_simulation_online_purity_and_yield')}}")
+        document.getElementById('changeBtn').style.display = 'inline-block'
+        {% else %}
+        while(true){
+            let response = await fetch("{{url_for('get_simulation_online_change_commit')}}")
+            let content = await response.json()
+            console.log(content)
+            if(content["commit"]){
+                getInitData('{{ url_for("get_simulation_online_init") }}')
+                break
+            }
+            await sleep(2000)
+        }
+        {% endif %}
+    }
+
+
+    function printLiveInfo(liveInfo){
+        document.getElementById("livestate").innerHTML = "Position:&emsp;" + liveInfo["switchPosition"]
+        let div = document.getElementById("livedatainfo2")
+        div.innerHTML = "<p>Time to switch: " + liveInfo["timeToSwitch"]/10000000 + "s<br><br>Flow rates:<br>Eluent: " + liveInfo["flowRateEluent"].toFixed(2) + "&emsp;&emsp;Extract: " + liveInfo["flowRateExtract"].toFixed(2)
+                    + "&emsp;&emsp;Feed: " + liveInfo["flowRateFeed"].toFixed(2) + "&emsp;&emsp;Raffinate: " + liveInfo["flowRateRaffinate"].toFixed(2) + "</p>"
+    }
+</script>
+{% endblock %}

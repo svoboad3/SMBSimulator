@@ -15,7 +15,7 @@ class Tube:
         del self.components[idx]
 
     def updateByIdx(self, idx, comp):
-        self.components[idx] = comp
+        self.components[idx].update(comp)
 
     def init(self, flowRate, dt, dummyVal = 0):
         self.flowRate = flowRate
@@ -55,3 +55,15 @@ class Tube:
         info["columnType"] = self.columnType
         info["deadVolume"] = self.deadVolume
         return info
+
+    def deepCopy(self):
+        copy = Tube(self.deadVolume)
+        copy.columnType = self.columnType
+        copy.flowRate = self.flowRate
+        copy.dt = self.dt
+        copy.t = self.t
+        copy.deadSteps = self.deadSteps
+        copy.components = [comp.copy() for comp in self.components]
+        for comp, copycomp in zip(self.components, copy.components):
+            copycomp.c = np.copy(comp.c)
+        return copy

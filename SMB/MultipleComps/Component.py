@@ -17,3 +17,15 @@ class Component:
         comp.saturCoef = self.saturCoef
         comp.feedConc = self.feedConc
         return comp
+
+    def update(self, comp):
+        if comp.henryConst > 0:
+            self.henryConst = comp.henryConst
+        if comp.disperCoef > 0:
+            self.disperCoef = comp.disperCoef
+        if comp.langmuirConst > 0:
+            self.langmuirConst = comp.langmuirConst
+        if comp.saturCoef > 0:
+            self.saturCoef = comp.saturCoef
+        if comp.feedConc > 0:
+            self.feedConc = comp.feedConc

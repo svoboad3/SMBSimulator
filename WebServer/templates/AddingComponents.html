@@ -8,13 +8,26 @@
 <!-- Navbar -->
 <div class="w3-top">
   <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
-    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+      {% if online %}
+      <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    <a href="{{ url_for('get_SMB_online') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
+    <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Components</a>
+    {% if running %}
+      <a href="{{ url_for('get_online_plcmaping') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">PLC Mapping</a>
+      <a href="{{ url_for('get_simulation_online') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation</a>
+      {%endif%}
+      {% else %}
+      <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
     <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
     <a href="{{ url_for('get_SMB') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
     <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Components</a>
     {% if running %}
+      <a href="{{ url_for('get_SMB_config') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation Configuration</a>
       <a href="{{ url_for('get_simulation') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation</a>
     {% endif %}
+      {%endif%}
+    <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white bar-right">Logout</a>
   </div>
 </div>
 {% endblock %}
@@ -43,18 +56,21 @@
         {% endfor %}
         </div>
       {% endfor %}
+          {% if error %}
+            <p>{{error}}</p>
+          {% endif%}
       </div>
       {% if not running %}
           <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="on('component')">Add component</button>
           {% if compInfo %}
-          <a href="{{ url_for('get_simulation') }}" class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round">Start Simulation</a>
+          <a href="{% if online %}{{url_for('get_online_plcmaping')}}{% else %}{{url_for('get_SMB_config')}}{%endif%}" class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round">Continue</a>
           {% endif %}
       {% endif %}
     </div>
 </div>
-<div id="component">
-        <button id="cross" onclick="off('component')">&cross;</button>
-        <form action="{{ url_for('post_add_component') }}" method="post" class="form-style-1">
+<div id="component" class="overlayform">
+        <button class="cross" onclick="off('component')">&cross;</button>
+        <form action="{% if online %}{{url_for('post_add_component_online')}}{% else %}{{url_for('post_add_component')}}{%endif%}" method="post" class="form-style-1">
             <label for="name">Name</label>
             <input type="text" id="name" name="name" required><br><br>
             <label for="feedConc">Feed Concentration [g/mL]</label>

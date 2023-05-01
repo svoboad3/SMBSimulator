@@ -18,9 +18,11 @@
 {% block body %}
 <div class="w3-row-padding w3-padding-64 w3-container">
   <div class="w3-content">
-      <form action="{% if online %}{{url_for('post_import_online')}}{% else %}{{url_for('post_import')}}{%endif%}" method="post" class="form-style-1">
-          <label for="importString">Import string</label>
-          <textarea name="importString" id="importString"></textarea><br>
+      <form action="{{ importUrl }}" method="post" class="form-style-1">
+          <label for="expImportString">Experiment import string</label>
+          <textarea name="expImportString" id="expImportString"></textarea><br>
+          <label for="resImportString">Result import string</label>
+          <textarea name="resImportString" id="resImportString"></textarea><br>
           <input type="submit" value="Import" class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round"/>
           {% if error %}
             <p>{{error}}</p>

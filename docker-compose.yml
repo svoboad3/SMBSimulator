@@ -1,6 +1,14 @@
-version: "3.9"
+version: "2.4"
 services:
-  web:
+  smb-simulator:
     build: .
     ports:
       - "6969:5000"
+    mem_limit: 500mb
+    networks:
+            - proxy-redirect
+networks:
+    proxy-redirect:
+        external:
+            name: proxy-redirect
+        driver: bridge

@@ -36,10 +36,23 @@ async function deleteComponent(idx){
     location.reload()
 }
 
-async function deleteSim(){
-    let response = await fetch(window.location.href, {
+async function deleteSim(link){
+    let response = await fetch(link, {
         method: 'DELETE'
     })
     let url = await response.text()
     window.location.href = url
 }
+
+async function postForm(formId, url){
+    let form = document.getElementById(formId)
+    let data = new FormData(form)
+    await fetch(url,{
+        "method": "POST",
+        "body": data,
+    })
+}
+
+
+
+

@@ -3,6 +3,7 @@ from SMB.MultipleComps.NonlinColumn import NonLinColumn
 from SMB.MultipleComps.Tube import Tube
 from SMB.GenericColumn import GenericColumn
 from SMB.MultipleComps.Component import Component
+import copy as cp
 
 class SMBStation:
     def __init__(self):
@@ -25,14 +26,22 @@ class SMBStation:
         self.settings = {}
         self.components = []
         self.switchingEnabled = False
+        self.interval = -1
+        self.countdown = -1
+        self.timer = 0
+        self.colCount = 0
+        self.switchState = 0
 
     def setFlowRateZone(self, zone, flowRate):
         self.flowRates[zone] = flowRate
 
     def setSwitchInterval(self, s):
-        self.switchingEnabled = True
         self.interval = s
         self.countdown = s
+        if s <= 0:
+            self.switchingEnabled = False
+        else:
+            self.switchingEnabled = True
 
     def setdt(self, dt):
         self.settings['dt'] = dt
@@ -49,6 +58,7 @@ class SMBStation:
         self.zones[zone].append(col)
         self.cins[zone].append([])
         self.cins[zone].append([])
+        self.colCount += 1
 
 
     # deletes column and a tube before it
@@ -58,6 +68,7 @@ class SMBStation:
             del self.zones[zone][idx-1]
         elif idx%2 == 0:
             del self.zones[zone][idx]
+        self.colCount -= 1
 
     def addComponent(self, name, feedConc = 0, henryConst = -1, disperCoef = -1, langmuirConst = -1, saturCoef = -1):
         comp = Component(name)
@@ -78,6 +89,7 @@ class SMBStation:
                 col.delByIdx(idx)
 
     def updateComponentByName(self, name, feedConc = 0, henryConst = -1, disperCoef = -1, langmuirConst = -1, saturCoef = -1):
+        print(name, feedConc)
         for idx, comp in enumerate(self.components):
             if comp.name == name:
                 if feedConc > 0:
@@ -92,7 +104,7 @@ class SMBStation:
                     comp.saturCoef = saturCoef
                 for zone in self.zones:
                     for col in self.zones[zone]:
-                        col.updateByIdx(idx, comp.copy())
+                        col.updateByIdx(idx, comp)
                 return
         comp = Component(name)
         comp.feedConc = feedConc
@@ -119,7 +131,7 @@ class SMBStation:
             comp.saturCoef = saturCoef
         for zone in self.zones:
             for col in self.zones[zone]:
-                col.updateByIdx(idx, comp.copy())
+                col.updateByIdx(idx, comp)
 
     def setPorosity(self, porosity):
         for zone in self.zones:
@@ -137,6 +149,7 @@ class SMBStation:
     def step(self, steps = 1):
         cins = [comp.feedConc for comp in self.components]
         for x in range(steps):
+            self.timer += self.settings['dt']
             res = {}
             for zone in self.zones:
                 res[zone] = []
@@ -181,6 +194,7 @@ class SMBStation:
         self.zones[4].append(tmptube)
         self.zones[4].append(tmpcol)
         self.initCols()
+        self.switchState = (self.switchState+1)%self.colCount
 
     def getColInfo(self):
         info = {}
@@ -213,4 +227,25 @@ class SMBStation:
         info['dt'] = self.settings['dt']
         info['Nx'] = self.settings['Nx']
         info['Switch Interval'] = self.interval
+        info['Countdown'] = self.countdown
+        info['timer'] = self.timer
         return info
+
+    def deepCopy(self):
+        copy = SMBStation()
+        for zone in self.zones:
+            for col in self.zones[zone]:
+                copy.zones[zone].append(col.deepCopy())
+        copy.cins = cp.deepcopy(self.cins)
+        copy.flowRates = cp.deepcopy(self.flowRates)
+        copy.outVals = cp.deepcopy(self.outVals)
+        copy.settings = cp.deepcopy(self.settings)
+        copy.components = [comp.copy() for comp in self.components]
+        copy.outVals = cp.deepcopy(self.outVals)
+        copy.switchingEnabled = self.switchingEnabled
+        copy.timer = self.timer
+        copy.colCount = self.colCount
+        copy.switchState = self.switchState
+        copy.interval = self.interval
+        copy.countdown = self.countdown
+        return copy

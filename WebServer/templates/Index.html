@@ -9,6 +9,11 @@
   <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
     <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-bluee" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
     <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    {% if auth %}
+    <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white bar-right">Logout</a>
+    {% else %}
+    <a href="{{ url_for('get_login_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white bar-right">Login</a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
@@ -16,7 +21,16 @@
 <!-- Header -->
 <header class="w3-container siemens-blue w3-center" style="padding:128px 16px">
   <h1 class="w3-margin w3-jumbo">Get started</h1>
-  <a type="button" href="{{ url_for('get_SMB') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">Start</a><br>
-  <a type="button" href="{{ url_for('get_import') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">Import</a>
+  {% if auth %}
+  <a type="button" href="{{ url_for('get_SMB') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">Offline Sim</a><br>
+  <a type="button" href="{{ url_for('get_import') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">Import</a><br>
+  <a type="button" href="{{ url_for('get_pe_import') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">PE Import</a><br><br>
+
+  <a type="button" href="{{ url_for('get_SMB_online') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">Online Sim</a><br>
+  <a type="button" href="{{ url_for('get_import_online') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">Import</a><br>
+  <a type="button" href="{{ url_for('get_pe_import_online') }}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">PE Import</a><br><br>
+  {% endif %}
+
+  <a type="button" href="{{url_for('get_simulation_online')}}" class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-round">Monitor Sim</a><br><br>
 </header>
 {% endblock %}

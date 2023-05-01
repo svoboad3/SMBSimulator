@@ -18,7 +18,7 @@ class NonLinColumn(GenericColumn):
         del self.components[idx]
 
     def updateByIdx(self, idx, comp):
-        self.components[idx] = comp
+        self.components[idx].update(comp)
 
     def init(self, flowRate, dt, Nx):
         self.flowRate = flowRate
@@ -66,3 +66,24 @@ class NonLinColumn(GenericColumn):
                 f[self.Nx - 1] = (((c0[self.Nx - 1] - c0[self.Nx - 2]) / self.dx) + ((c1[self.Nx - 1] - c1[self.Nx - 2]) / self.dx)) / 2
                 # f[i] = (((c0[i]-c0[i-1])/dx)+((c1[i]-c1[i-2])/dx))/2
         return f
+
+    def deepCopy(self):
+        copy = NonLinColumn(self.length, self.diameter, self.porosity)
+        copy.columnType = self.columnType
+        copy.flowRate = self.flowRate
+        copy.Nx = self.Nx
+        copy.dt = self.dt
+        copy.flowSpeed = self.flowSpeed
+        copy.x = self.x
+        copy.dx = self.dx
+        copy.components = [comp.copy() for comp in self.components]
+        for comp, copycomp in zip(self.components, copy.components):
+            copycomp.C1 = comp.C1
+            copycomp.C2 = comp.C2
+            copycomp.A = np.copy(comp.A)
+            copycomp.B = np.copy(comp.B)
+            copycomp.A_diag = np.copy(comp.A_diag)
+            copycomp.Aabs = np.copy(comp.Aabs)
+            copycomp.Babs = np.copy(comp.Babs)
+            copycomp.c = np.copy(comp.c)
+        return copy

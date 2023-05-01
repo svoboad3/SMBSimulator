@@ -84,7 +84,7 @@ img {
 	opacity: 0.7;
 }
 
-#column,#component{
+.overlayform{
 	background-color: #fff;
 	width: 30%;
 	margin: 0 35%;
@@ -96,19 +96,27 @@ img {
 	z-index: 3;
 
 }
-#column{
-    bottom: 20dvh;
-}
-#component{
+.overlayform{
     bottom: 40dvh;
 }
-#overlay,#column,#component{display: none;}
-#cross{
+#column{
+    bottom: 10dvh;
+}
+#component{
+    bottom: 30dvh;
+}
+
+#changeDiv{
+    bottom: 5dvh;
+	margin: 0 20%;
+    width: 60%;
+}
+#overlay,.overlayform{display: none;}
+.cross{
 	position: absolute;
     left: 94%;
     top: 0px;
     color: #cc2e2e;
-	font-size: 18;
 	font-weight: bold;
 	background-color: transparent;
 	border: 0
@@ -117,7 +125,6 @@ img {
     float: right;
     top: 0px;
     color: #cc2e2e;
-	font-size: 18;
 	font-weight: bold;
 	background-color: transparent;
 	border: 0
@@ -176,6 +183,11 @@ img {
   animation: fadeIn 1s
 }
 
+.popup{
+    font-size: 1rem;
+}
+
+
 /* Add animation (fade in the popup) */
 @-webkit-keyframes fadeIn {
   from {opacity: 0;}
@@ -189,4 +201,26 @@ img {
 
 .rel-pos{
     position: relative;
+}
+
+textarea {
+    resize: none;
+    width: 20em;
+    height: 12em;
+}
+
+.green{
+  color: #00f600;
+}
+
+.red{
+  color: red;
+}
+
+.green,.red{
+    display: none;
+}
+
+.bar-right {
+    float: right  !important;
 }
