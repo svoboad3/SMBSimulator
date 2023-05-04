@@ -1,0 +1,9 @@
+GET https://192.168.11.138/DataService/Data
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.13 (Java/17.0.5)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-03-27T134539.401.html
+
+###
+

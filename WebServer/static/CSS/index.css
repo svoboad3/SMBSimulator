@@ -1,0 +1,226 @@
+body,h1,h2,h3,h4,h5,h6 {
+    font-family: "Lato", sans-serif
+}
+.w3-bar,h1,button {
+    font-family: "Montserrat", sans-serif
+}
+.fa-anchor,.fa-coffee {
+    font-size:200px
+}
+
+.bar-right {
+    float: right  !important;
+}
+
+.clearfix{*zoom:1;}.clearfix:before,.clearfix:after{display:table;content:"";line-height:0;}
+.clearfix:after{clear:both;}
+.hide-text{color:transparent;text-shadow:none;background-color:transparent;border:0;}
+.input-block-level{display:block;width:100%;min-height:30px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;}
+.btn-file{overflow:hidden;position:relative;vertical-align:middle;}.btn-file>input{position:absolute;top:0;right:0;margin:0;opacity:0;filter:alpha(opacity=0);transform:translate(-300px, 0) scale(4);font-size:23px;direction:ltr;cursor:pointer;}
+.fileupload{margin-bottom:9px;}.fileupload .uneditable-input{display:inline-block;margin-bottom:0px;vertical-align:middle;cursor:text;}
+.fileupload .thumbnail{overflow:hidden;display:inline-block;margin-bottom:5px;vertical-align:middle;text-align:center;}.fileupload .thumbnail>img{display:inline-block;vertical-align:middle;max-height:100%;}
+.fileupload .btn{vertical-align:middle;}
+.fileupload-exists .fileupload-new,.fileupload-new .fileupload-exists{display:none;}
+.fileupload-inline .fileupload-controls{display:inline;}
+.fileupload-new .input-append .btn-file{-webkit-border-radius:0 3px 3px 0;-moz-border-radius:0 3px 3px 0;border-radius:0 3px 3px 0;}
+.thumbnail-borderless .thumbnail{border:none;padding:0;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none;}
+.fileupload-new.thumbnail-borderless .thumbnail{border:1px solid #ddd;}
+.control-group.warning .fileupload .uneditable-input{color:#a47e3c;border-color:#a47e3c;}
+.control-group.warning .fileupload .fileupload-preview{color:#a47e3c;}
+.control-group.warning .fileupload .thumbnail{border-color:#a47e3c;}
+.control-group.error .fileupload .uneditable-input{color:#b94a48;border-color:#b94a48;}
+.control-group.error .fileupload .fileupload-preview{color:#b94a48;}
+.control-group.error .fileupload .thumbnail{border-color:#b94a48;}
+.control-group.success .fileupload .uneditable-input{color:#468847;border-color:#468847;}
+.control-group.success .fileupload .fileupload-preview{color:#468847;}
+.control-group.success .fileupload .thumbnail{border-color:#468847;}
+
+.siemens-blue{
+    color: white;
+    background-color: #00A1D1;
+}
+
+input[type=checkbox]{
+    box-sizing: border-box;
+
+    width: 20px;
+    height: 20px;
+    background: #262648;
+    border: 2px solid #B3B3BE;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+input[type=checkbox]:hover{
+background: #001F39;
+border: 2px solid #00FFB9;
+}
+
+input[type=checkbox]:checked{
+background: #001F39;
+border: 2px solid #00FFB9;
+}
+
+.boldText{
+    font-weight:bolder
+}
+
+.inline {
+    display: inline-block
+}
+
+img {
+    vertical-align: top;
+}
+
+#overlay {
+	background-color: #000;
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	top: 0px;
+	z-index: 2;
+	opacity: 0.7;
+}
+
+.overlayform{
+	background-color: #fff;
+	width: 30%;
+	margin: 0 35%;
+	border: 3px solid #2ecc71;
+	border-radius: 10px;
+	padding: 20px;
+	text-align: center;
+	position: fixed;
+	z-index: 3;
+
+}
+.overlayform{
+    bottom: 40dvh;
+}
+#column{
+    bottom: 10dvh;
+}
+#component{
+    bottom: 30dvh;
+}
+
+#changeDiv{
+    bottom: 5dvh;
+	margin: 0 20%;
+    width: 60%;
+}
+#overlay,.overlayform{display: none;}
+.cross{
+	position: absolute;
+    left: 94%;
+    top: 0px;
+    color: #cc2e2e;
+	font-weight: bold;
+	background-color: transparent;
+	border: 0
+}
+#deleteCol{
+    float: right;
+    top: 0px;
+    color: #cc2e2e;
+	font-weight: bold;
+	background-color: transparent;
+	border: 0
+}
+.txt,.pswd{
+	background-color: #fff;
+	display: block;
+	border: 2px solid #2ecc71;
+	border-radius: 10px;
+	padding: 5px;
+	margin: auto;
+	margin-bottom: 15px
+}
+
+
+
+/* Popup container */
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+.popup .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s
+}
+
+.popup{
+    font-size: 1rem;
+}
+
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+
+.rel-pos{
+    position: relative;
+}
+
+textarea {
+    resize: none;
+    width: 20em;
+    height: 12em;
+}
+
+.green{
+  color: #00f600;
+}
+
+.red{
+  color: red;
+}
+
+.green,.red{
+    display: none;
+}
+
+.bar-right {
+    float: right  !important;
+}

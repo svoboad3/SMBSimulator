@@ -1,0 +1,125 @@
+{% extends "Layout.html" %}
+{% block title %}Upload{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/form.css') }}">
+{% endblock %}
+{% block navbar %}
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+      <a href="{{ url_for('get_SMB') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
+      <a href="{{ url_for('get_components') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Components</a>
+      <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Simulation Configuration</a>
+    {% if running %}
+      <a href="{{ url_for('get_simulation') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation</a>
+    {% endif %}
+    <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white bar-right">Logout</a>
+  </div>
+</div>
+{% endblock %}
+{% block body %}
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+     <h1>Simulation configuration</h1>
+      <form  action="{{ url_for('post_create_SMB') }}" method="post" class="form-style-1">
+            <h4>Flow rates [mL/h]<i class="fa fa-question-circle popup" onmouseenter="showPopup('zoneExp2')" onmouseleave="showPopup('zoneExp2')">
+                    <span class="popuptext" id="zoneExp2">
+                        zone 1 - after desorbent<br>
+                        zone 2 - after extract<br>
+                        zone 3 - after feed<br>
+                        zone 4 - after raffinate<br>
+                    </span>
+                </i>
+            </h4>
+            <label for="flowRate1">Zone 1</label>
+            <input type="number" id="flowRate1" name="flowRate1" min="0.01" step="any" required><br>
+            <label for="flowRate2">Zone 2</label>
+            <input type="number" id="flowRate2" name="flowRate2" min="0.01" step="any" required><br>
+            <label for="flowRate3">Zone 3</label>
+            <input type="number" id="flowRate3" name="flowRate3" min="0.01" step="any" required><br>
+            <label for="flowRate4">Zone 4</label>
+            <input type="number" id="flowRate4" name="flowRate4" min="0.01" step="any" required><br><br>
+            <label for="switchInterval">Switch interval [s]</label>
+            <input type="number" id="switchInterval" name="switchInterval" min="0.01" step="any" required><br><br>
+                      <label for="dt">
+                dt <i class="fa fa-question-circle popup" onmouseenter="showPopup('dtExp')" onmouseleave="showPopup('dtExp')">
+                    <span class="popuptext" id="dtExp">
+                        length of time step in seconds
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="dt" name="dt" min="0.01" step="any" required><br><br>
+            <label for="Nx">
+                Nx <i class="fa fa-question-circle popup" onmouseenter="showPopup('NxExp')" onmouseleave="showPopup('NxExp')">
+                    <span class="popuptext" id="NxExp">
+                        number of spatial differences
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="Nx" name="Nx" min="1" step="1" required><br><br>
+            <label for="simtime">Simulation Time [s]</label>
+            <input type="number" id="simtime" name="simtime" min="1" step="1" required><br><br>
+              {% if readyNext and not running %}
+                <input type="submit" value="Start Simulation" class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round"/>
+              {% endif %}
+      </form>
+
+    </div>
+</div>
+<script type="text/javascript">
+    {% if formInfo %}
+        {% if formInfo['flowRate1'] %}
+            document.getElementById("flowRate1").value = {{formInfo['flowRate1']}}
+            {% if running %}
+            document.getElementById("flowRate1").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+        {% if formInfo['flowRate2'] %}
+            document.getElementById("flowRate2").value = {{formInfo['flowRate2']}}
+            {% if running %}
+            document.getElementById("flowRate2").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+        {% if formInfo['flowRate3'] %}
+            document.getElementById("flowRate3").value = {{formInfo['flowRate3']}}
+            {% if running %}
+            document.getElementById("flowRate3").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+        {% if formInfo['flowRate4'] %}
+            document.getElementById("flowRate4").value = {{formInfo['flowRate4']}}
+            {% if running %}
+            document.getElementById("flowRate4").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+        {% if formInfo['switchInterval'] %}
+            document.getElementById("switchInterval").value = {{formInfo['switchInterval']}}
+            {% if running %}
+            document.getElementById("switchInterval").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+        {% if formInfo['dt'] %}
+            document.getElementById("dt").value = {{formInfo['dt']}}
+            {% if running %}
+            document.getElementById("dt").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+        {% if formInfo['Nx'] %}
+            document.getElementById("Nx").value = {{formInfo['Nx']}}
+            {% if running %}
+            document.getElementById("Nx").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+        {% if formInfo['simtime'] %}
+            document.getElementById("simtime").value = {{formInfo['simtime']}}
+            {% if running %}
+            document.getElementById("simtime").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "Layout.html" %}
+{% block title %}Upload{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/form.css') }}">
+{% endblock %}
+{% block navbar %}
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
+      {% if online %}
+      <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    <a href="{{ url_for('get_SMB_online') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
+    <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Components</a>
+    {% if running %}
+      <a href="{{ url_for('get_online_plcmaping') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">PLC Mapping</a>
+      <a href="{{ url_for('get_simulation_online') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation</a>
+      {%endif%}
+      {% else %}
+      <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    <a href="{{ url_for('get_SMB') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
+    <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Components</a>
+    {% if running %}
+      <a href="{{ url_for('get_SMB_config') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation Configuration</a>
+      <a href="{{ url_for('get_simulation') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation</a>
+    {% endif %}
+      {%endif%}
+    <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white bar-right">Logout</a>
+  </div>
+</div>
+{% endblock %}
+{% block body %}
+<!-- First Grid -->
+<div id="overlay" onclick="off('component')">
+</div>
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+     {% if running %}
+     <h1>Components in separation mixture</h1>
+     {% else %}
+     <h1>Add components to separation mixture</h1>
+     {% endif %}
+      <div class="comps">
+      {% for key, value in compInfo.items() %}
+        <div class="compInfo">
+        {% if not running %}
+        <button id="deleteCol" onclick="deleteComponent('{{loop.index0}}')">&cross;</button>
+        {% endif %}
+        <h6>{{key}}</h6><br>
+        {% for key2, value2 in value.items() %}
+            {% if value2 != -1 %}
+                <span>{{key2}}: {{value2}}</span><br>
+            {% endif %}
+        {% endfor %}
+        </div>
+      {% endfor %}
+          {% if error %}
+            <p>{{error}}</p>
+          {% endif%}
+      </div>
+      {% if not running %}
+          <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="on('component')">Add component</button>
+          {% if compInfo %}
+          <a href="{% if online %}{{url_for('get_online_plcmaping')}}{% else %}{{url_for('get_SMB_config')}}{%endif%}" class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round">Continue</a>
+          {% endif %}
+      {% endif %}
+    </div>
+</div>
+<div id="component" class="overlayform">
+        <button class="cross" onclick="off('component')">&cross;</button>
+        <form action="{% if online %}{{url_for('post_add_component_online')}}{% else %}{{url_for('post_add_component')}}{%endif%}" method="post" class="form-style-1">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required><br><br>
+            <label for="feedConc">Feed Concentration [g/mL]</label>
+            <input type="number" id="feedConc" name="feedConc" min="0.01" step="any" required><br><br>
+            {% if linCol %}
+                <label for="henryConst">Henry Constant</label>
+                <input type="number" id="henryConst" name="henryConst" min="0.01" step="any" required><br><br>
+            {% endif %}
+            {% if nonLinCol %}
+                <label for="langmuirConst">Langmuir Constant</label>
+                <input type="number" id="langmuirConst" name="langmuirConst" min="0.01" step="any" required><br><br>
+                <label for="saturCoef">Saturation Coefficient</label>
+                <input type="number" id="saturCoef" name="saturCoef" min="0.01" step="any" required><br><br>
+            {% endif %}
+            <label for="disperCoef">Dispersion Coefficient</label>
+            <input type="number" id="disperCoef" name="disperCoef" min="0.01" step="any" required><br><br>
+            <input type="submit" value="Add" id="btn" class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round"/>
+        </form>
+    </div>
+<script type="text/javascript">
+</script>
+{% endblock %}

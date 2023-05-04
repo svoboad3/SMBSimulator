@@ -1,0 +1,206 @@
+{% extends "Layout.html" %}
+{% block title %}Upload{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/form.css') }}">
+{% endblock %}
+{% block navbar %}
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    <a href="{{ url_for('get_SMB_online') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
+      <a href="{{ url_for('get_components_online') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Components</a>
+      <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Tags PLC Mapping</a>
+    <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white bar-right">Logout</a>
+  </div>
+</div>
+{% endblock %}
+{% block body %}
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+     <h1>Map PLC tags</h1>
+      {% if error %}{{error}}{%endif%}
+      <form method="post" class="form-style-1">
+            <h4>Flow rates</h4>
+            <label for="flowRateUnits">Units</label>
+            <select name="flowRateUnits" id="flowRateUnits">
+              <option value="1" >mL/h</option>
+              <option value="1000">L/h</option>
+              <option value="60">mL/min</option>
+            </select><br>
+            <label for="flowRateEluent">Eluent</label>
+            <select name="flowRateEluent" id="flowRateEluent">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br>
+            <label for="flowRateExtract">Extract</label>
+            <select name="flowRateExtract" id="flowRateExtract">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br>
+            <label for="flowRateFeed">Feed</label>
+            <select name="flowRateFeed" id="flowRateFeed">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br>
+            <label for="flowRateRaffinate">Raffinate</label>
+            <select name="flowRateRaffinate" id="flowRateRaffinate">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br>
+            <label for="flowRateRecycle">Recycle</label>
+            <select name="flowRateRecycle" id="flowRateRecycle">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br><br>
+          <h4>Pumps <i class="fa fa-question-circle popup" onmouseenter="showPopup('pumpExp')" onmouseleave="showPopup('pumpExp')">
+                    <span class="popuptext" id="pumpExp">
+                        pumps are a input tag as opposed to flow rates, which are output tags
+                    </span>
+                </i>
+            </h4>
+            <label for="eluent">Eluent</label>
+            <select name="eluent" id="eluent">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br>
+            <label for="extract">Extract</label>
+            <select name="extract" id="extract">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br>
+            <label for="feed">Feed</label>
+            <select name="feed" id="feed">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br>
+            <label for="raffinate">Raffinate</label>
+            <select name="raffinate" id="raffinate">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br>
+            <label for="recycle">Recycle</label>
+            <select name="recycle" id="recycle">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br><br>
+            <h4>Concentrations</h4>
+            <label for="concUnits">Units</label>
+            <select name="concUnits" id="concUnits">
+              <option value="1" >g/l</option>
+              <option value="1000" >kg/l</option>
+            </select><br>
+            {% for comp in compList %}
+                <h5>Concentrations of {{comp}}</h5>
+                <label for="extract{{comp}}">Extract</label>
+                <select name="extract{{comp}}" id="extract{{comp}}">
+                {% for tag in plcTags %}
+                  <option value="{{tag}}" >{{tag}}</option>
+                {% endfor%}
+                </select><br>
+                <label for="feed{{comp}}">Feed</label>
+                <select name="feed{{comp}}" id="feed{{comp}}">
+                {% for tag in plcTags %}
+                  <option value="{{tag}}" >{{tag}}</option>
+                {% endfor%}
+                </select><br>
+                <label for="raffinate{{comp}}">Raffinate</label>
+                <select name="raffinate{{comp}}" id="raffinate{{comp}}">
+                {% for tag in plcTags %}
+                  <option value="{{tag}}" >{{tag}}</option>
+                {% endfor%}
+                </select><br><br>
+            {% endfor%}
+            <label for="switchPosition">Switch position</label>
+            <select name="switchPosition" id="switchPosition">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br><br>
+            <label for="switchIntervalTag">Switch interval tag</label>
+            <select name="switchIntervalTag" id="switchIntervalTag">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br><br>
+            <label for="timeToSwitchTag">Time to switch tag</label>
+            <select name="timeToSwitchTag" id="timeToSwitchTag">
+            {% for tag in plcTags %}
+              <option value="{{tag}}" >{{tag}}</option>
+            {% endfor%}
+            </select><br><br>
+            <label for="dt">
+                dt <i class="fa fa-question-circle popup" onmouseenter="showPopup('dtExp')" onmouseleave="showPopup('dtExp')">
+                    <span class="popuptext" id="dtExp">
+                        length of time step in seconds
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="dt" name="dt" min="0.01" step="any" required><br><br>
+            <label for="Nx">
+                Nx <i class="fa fa-question-circle popup" onmouseenter="showPopup('NxExp')" onmouseleave="showPopup('NxExp')">
+                    <span class="popuptext" id="NxExp">
+                        number of spatial differences for one column
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="Nx" name="Nx" min="1" step="1" required><br><br>
+            <label for="horizon">
+                Future horizon [s] <i class="fa fa-question-circle popup" onmouseenter="showPopup('simtimeExp')" onmouseleave="showPopup('simtimeExp')">
+                    <span class="popuptext" id="simtimeExp">
+                        amount of time simulation runs in future of live measurements
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="horizon" name="horizon" min="1" step="1" required><br><br>
+            <label for="backhorizon">
+                Backwards horizon [s] <i class="fa fa-question-circle popup" onmouseenter="showPopup('simtimebackExp')" onmouseleave="showPopup('simtimebackExp')">
+                    <span class="popuptext" id="simtimebackExp">
+                        amount of time simulation data is saved in the past
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="backhorizon" name="backhorizon" min="1" step="1" required><br><br>
+            <label for="liveTime">
+                Time of live SMB [s] <i class="fa fa-question-circle popup" onmouseenter="showPopup('liveTimeExp')" onmouseleave="showPopup('liveTimeExp')">
+                    <span class="popuptext" id="liveTimeExp">
+                        to match up with simulation
+                    </span>
+                </i>
+            </label>
+            <input type="number" id="liveTime" name="liveTime" min="1" step="1" required><br><br>
+        <input type="submit" value="Continue" class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round"/>
+      </form>
+
+    </div>
+</div>
+<script type="text/javascript">
+    {% if formInfo %}
+        {% if formInfo['dt'] %}
+            document.getElementById("dt").value = {{formInfo['dt']}}
+            {% if running %}
+            document.getElementById("dt").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+        {% if formInfo['Nx'] %}
+            document.getElementById("Nx").value = {{formInfo['Nx']}}
+            {% if running %}
+            document.getElementById("Nx").setAttribute("readonly", "")
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</script>
+{% endblock %}

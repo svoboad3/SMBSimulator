@@ -1,0 +1,356 @@
+{% extends "Layout.html" %}
+{% block title %}Upload{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/form.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+{% block navbar %}
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar siemens-blue w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large siemens-blue" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="{{ url_for('get_main_page') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    <a href="{{ url_for('get_SMB') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">SMB Station</a>
+    <a href="{{ url_for('get_components') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Components</a>
+    <a href="{{ url_for('get_SMB_config') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Simulation Configuration</a>
+    <a class="w3-bar-item w3-button w3-hide-small w3-padding-large  w3-white">Simulation</a>
+  </div>
+</div>
+{% endblock %}
+{% block body %}
+<div id="overlay" onclick="off('flowRateDiv'); off('switchDiv'); off('speedDiv');">
+</div>
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="getExport('{{exportLink}}')">Export Settings</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="deleteSim()">Delete Sim</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="stopPrint()" id="pauseBtn">Pause</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="startPrint()" id="startBtn" style="display: none;">Start</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="on('speedDiv')" id="speedBtn">Speed</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="on('flowRateDiv')" id="flowRateBtn">Flow Rate</button>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="on('switchDiv')" id="switchBtn">Switch Interval</button>
+      <div id="dataservice" class="output"><h3>Measured Output</h3></div>
+      <div id="output" class="output"><h3>Simulation Output</h3></div>
+      <div id="zone1" class="zone"><h3>Zone 1</h3></div>
+      <div id="zone2" class="zone"><h3>Zone 2</h3></div>
+      <div id="zone3" class="zone"><h3>Zone 3</h3></div>
+      <div id="zone4" class="zone"><h3>Zone 4</h3></div>
+  </div>
+</div>
+<div id="speedDiv" class="overlayform">
+        <button class="cross" onclick="off('speedDiv')">&cross;</button>
+        <form action="#" method="post" class="form-style-1" id="speedForm" target="hiddenFrame">
+            <label for="speed">Simulation Speed [ms per Time step]</label>
+            <input type="number" id="speed" name="speed" min="0.01" step="any" required><br><br>
+        </form>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="stopPrint(); startPrint(parseInt(document.getElementById('speed').value)); off('speedDiv');">Change</button>
+    </div>
+<div id="flowRateDiv" class="overlayform">
+        <button class="cross" onclick="off('flowRateDiv')">&cross;</button>
+        <form action="{{ url_for('post_simulation_flowrate') }}" method="post" class="form-style-1" id="flowRateForm" target="hiddenFrame">
+            <label for="flowRateZone">
+                Zone <i class="fa fa-question-circle popup" onmouseenter="showPopup('zoneExp')" onmouseleave="showPopup('zoneExp')">
+                    <span class="popuptext" id="zoneExp">
+                        zone 1 - after desorbent<br>
+                        zone 2 - after extract<br>
+                        zone 3 - after feed<br>
+                        zone 4 - after raffinate<br>
+                    </span>
+                </i>
+            </label>
+            <select name="flowRateZone" id="flowRateZone" onchange="flowRateShow()">
+              <option value="1" {% if formInfo and formInfo['zone'] == 1 %}selected{% endif %}>1</option>
+              <option value="2" {% if formInfo and formInfo['zone'] == 2 %}selected{% endif %}>2</option>
+              <option value="3" {% if formInfo and formInfo['zone'] == 3 %}selected{% endif %}>3</option>
+              <option value="4" {% if formInfo and formInfo['zone'] == 4 %}selected{% endif %}>4</option>
+            </select><br><br>
+            <label for="flowRate">Flow Rate [mL/h]</label>
+            <input type="number" id="flowRate" name="flowRate" min="0.01" step="any" required><br><br>
+        </form>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="postForm('flowRateForm', '{{ url_for('post_simulation_flowrate') }}'); off('flowRateDiv');">Change</button>
+    </div>
+<div id="switchDiv" class="overlayform">
+        <button class="cross" onclick="off('switchDiv')">&cross;</button>
+        <form action="{{ url_for('post_simulation_flowrate') }}" method="post" class="form-style-1" id="switchForm" target="hiddenFrame">
+            <label for="switch">Switch Interval [s]</label>
+            <input type="number" id="switch" name="switch" min="0.01" step="any" required><br><br>
+        </form>
+        <button class="w3-button siemens-blue w3-padding-large w3-large w3-margin-top w3-round" onclick="postForm('switchForm', '{{ url_for('post_simulation_switch') }}'); off('switchDiv');">Change</button>
+    </div>
+<iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+<script type="text/javascript">
+    {% if formInfo %}
+    let flowRate = []
+    {% if formInfo['flowRate1'] %}
+    flowRate[0] = {{formInfo['flowRate1']}}
+    {% endif %}
+    {% if formInfo['flowRate2'] %}
+    flowRate[1] = {{formInfo['flowRate2']}}
+    {% endif %}
+    {% if formInfo['flowRate3'] %}
+    flowRate[2] = {{formInfo['flowRate3']}}
+    {% endif %}
+    {% if formInfo['flowRate4'] %}
+    flowRate[3] = {{formInfo['flowRate4']}}
+    {% endif %}
+    {% if formInfo['switch'] %}
+    document.getElementById("switch").value = {{formInfo['switch']}}
+    {% endif %}
+    {% if formInfo['dt'] %}
+    let dt = parseInt({{formInfo['dt']}})
+    let dtCounter = dt
+    let outputLabels = []
+    let outputData0 = []
+    let outputData1 = []
+    {% endif %}
+    {% endif %}
+    let OUTPUT_GRAPH_POINT_COUNTER = 200
+    let DATASERVICE_GRAPH_POINT_COUNTER = 50
+    let colorList = ['rgb(255, 0, 0)', 'rgb(0, 0, 255)', 'rgb(0, 255, 0)', 'rgb(255, 255, 0)', 'rgb(255, 0, 255)',
+                     'rgb(0, 255, 255)', 'rgb(255, 120, 0)', 'rgb(255, 0, 120)', 'rgb(120, 0, 255)' ]
+    let dataQueue = []
+    let dataserviceData = []
+    let dataserviceLabels = []
+    let compNames = []
+    let charts = []
+    let outputCharts = []
+    function initCanvases(dataSample){
+        console.log('calling initCanvases')
+        let divs = document.getElementsByClassName('zone')
+        for(let i = 0; i < 4; i++){
+            charts.push([])
+            for(let j = 0; j < dataSample[i+1].length; j++){
+                let newDiv = document.createElement("div")
+                newDiv.classList.add("chart-container")
+                if(j%2 == 0)
+                    newDiv.style = "height:100%; width:40%; float:left;"
+                else if(j%2 == 1)
+                    newDiv.style = "height:100%; width:60%; float:left;"
+                let newCanvas = document.createElement("canvas")
+                newCanvas.classList.add("chart")
+                newDiv.appendChild(newCanvas)
+                divs[i].appendChild(newDiv)
+                charts[i].push(new Chart(newCanvas, {
+                                labels: [],
+                                datasets: [],
+                                options: {
+                                  scales: {
+                                    y: {
+                                      beginAtZero: true,
+                                      suggestedMax: 0.05
+                                    }
+                                  }
+                                }
+                                }))
+            }
+        }
+        let outputDiv = document.getElementById('output')
+        let outputNames = ["Extract", "Raffinate"]
+        for(let i = 0; i < 2; i++){
+            let newDiv = document.createElement("div")
+            newDiv.classList.add("chart-container")
+            newDiv.style = "height:100%; width:50%; float:left;"
+            let newCanvas = document.createElement("canvas")
+            newCanvas.classList.add("chart")
+            newDiv.appendChild(newCanvas)
+            outputDiv.appendChild(newDiv)
+            outputCharts.push(new Chart(newCanvas, {
+                            labels: [],
+                            datasets: [],
+                            options: {
+                              scales: {
+                                y: {
+                                  beginAtZero: true,
+                                  suggestedMax: 0.05
+                                }
+                              },
+                              plugins: {
+                                title: {
+                                    display: true,
+                                    text: outputNames[i]
+                                    }
+                                }
+                            }
+                            }))
+        }
+        let dataserviceDiv = document.getElementById('dataservice')
+        let dataserviceNames = ["Extract", "Raffinate"]
+        for(let i = 0; i < 2; i++){
+            let newDiv = document.createElement("div")
+            newDiv.classList.add("chart-container")
+            newDiv.style = "height:100%; width:50%; float:left;"
+            let newCanvas = document.createElement("canvas")
+            newCanvas.classList.add("chart")
+            newDiv.appendChild(newCanvas)
+            dataserviceDiv.appendChild(newDiv)
+            outputCharts.push(new Chart(newCanvas, {
+                            labels: [],
+                            datasets: [],
+                            options: {
+                              scales: {
+                                y: {
+                                  beginAtZero: true,
+                                  suggestedMax: 0.05
+                                }
+                              },
+                              plugins: {
+                                title: {
+                                    display: true,
+                                    text: dataserviceNames[i]
+                                    }
+                                }
+                            }
+                            }))
+        }
+    }
+    async function getData(link){
+        if(dataQueue.length < 200){
+            let response = await fetch(link)
+            let content = await response.json()
+            let data = content['data']
+            compNames = content['compList']
+            if(charts.length == 0)
+                initCanvases(data[0])
+            for(let i=0; i < data.length; i++){
+                dataQueue.push(data[i])
+            }
+        }
+    }
+    async function getDataserviceData(link){
+        let response = await fetch(link)
+        let content = await response.json()
+        dataserviceData = dataserviceData.concat(content)
+        dataserviceLabels = [...Array(dataserviceData.length).keys()]
+        if(dataserviceData.length > DATASERVICE_GRAPH_POINT_COUNTER){
+            let difference = dataserviceData.length = DATASERVICE_GRAPH_POINT_COUNTER
+            dataserviceData = dataserviceData.slice(-DATASERVICE_GRAPH_POINT_COUNTER)
+            if(dataserviceLabels.length < dataserviceData.length){
+                dataserviceLabels = [...Array(dataserviceData.length).keys()]
+            }
+            dataserviceLabels = dataserviceLabels.map(x => x + difference)
+        }
+    }
+    function printData(){
+        if(dataQueue.length > 0){
+            let data = dataQueue.shift();
+            for(let i=1; i < Object.keys(data).length+1; i++){
+                for(let j=0; j < data[i].length; j++){
+                    if(charts[i-1][j].data.labels.length != data[i][j].length){
+                        charts[i-1][j].data.labels = [...Array(data[i][j][0].length).keys()]
+                    }
+                    for(let k=0; k < data[i][j].length; k++){
+                        if(outputData0.length <= k){
+                            outputData0.push([])
+                        }
+                        if(outputData1.length <= k){
+                            outputData1.push([])
+                        }
+                        if(charts[i-1][j].data.datasets.length > k){
+                            charts[i-1][j].data.datasets[k].data = data[i][j][k]
+                        }
+                        else{
+                            charts[i-1][j].data.datasets.push({
+                                                        label: compNames[k],
+                                                        type: 'line',
+                                                        data: data[i][j][k],
+                                                        borderColor: colorList[k]
+                                                    })
+                        }
+                        if(i == 1 && j == data[i].length-1 && dtCounter%(10*dt) == 0){
+                            outputData0[k].push(data[i][j][k].slice(-1)[0])
+                            if(outputData0[k].length > OUTPUT_GRAPH_POINT_COUNTER){
+                                outputData0[k].shift()
+                            }
+                            if(outputCharts[0].data.datasets.length > k){
+                                outputCharts[0].data.datasets[k].data = outputData0[k]
+                            }
+                            else{
+                                outputCharts[0].data.datasets.push({
+                                                            label: compNames[k],
+                                                            type: 'line',
+                                                            data: outputData0[k],
+                                                            borderColor: colorList[k]
+                                                        })
+                            }
+                            outputCharts[0].data.labels = outputLabels
+                        }
+                        if(i == 3 && j == data[i].length-1 && dtCounter%(10*dt) == 0){
+                            outputData1[k].push(data[i][j][k].slice(-1)[0])
+                            if(outputData1[k].length > OUTPUT_GRAPH_POINT_COUNTER){
+                                outputData1[k].shift()
+                            }
+                            if(outputCharts[1].data.datasets.length > k){
+                                outputCharts[1].data.datasets[k].data = outputData1[k]
+                            }
+                            else{
+                                outputCharts[1].data.datasets.push({
+                                                            label: compNames[k],
+                                                            type: 'line',
+                                                            data: outputData1[k],
+                                                            borderColor: colorList[k]
+                                                        })
+                            }
+                            outputCharts[1].data.labels = outputLabels
+                        }
+                    }
+                    charts[i-1][j].update()
+                }
+            }
+            dtCounter += dt
+            if(dtCounter%(10*dt) == 0){
+                outputLabels.push(dtCounter)
+                if(outputLabels.length > OUTPUT_GRAPH_POINT_COUNTER){
+                    outputLabels.shift()
+                }
+                outputCharts[0].update()
+                outputCharts[1].update()
+            }
+        }
+        if(outputCharts[2].data.datasets.length > 0) {
+            outputCharts[2].data.datasets[0].data = dataserviceData
+        }
+        else{
+            outputCharts[2].data.datasets.push({
+                                        label: "test",
+                                        type: 'line',
+                                        data: dataserviceData,
+                                        borderColor: colorList[0]
+                                    })
+        }
+        outputCharts[2].data.labels = [...Array(dataserviceData.length).keys()]
+        outputCharts[2].update()
+    }
+    setInterval(getData, 1000, '{{dataLink}}')
+    setInterval(getDataserviceData, 5000, '{{url_for("get_dataservice_data")}}')
+    let printHandler = setInterval(printData, 50)
+    function stopPrint(){
+        clearInterval(printHandler)
+        document.getElementById("pauseBtn").style.display = "none"
+        document.getElementById("startBtn").style.display = "inline-block"
+    }
+    function startPrint(ms = 50){
+        console.log("calling startPrint with " + ms + "ms interval")
+        printHandler = setInterval(printData, ms)
+        document.getElementById("pauseBtn").style.display = "inline-block"
+        document.getElementById("startBtn").style.display = "none"
+    }
+    function flowRateShow(){
+        let zone = document.getElementById("flowRateZone")
+        let zoneVal = parseInt(zone.value)
+        document.getElementById("flowRate").value = flowRate[zoneVal-1]
+    }
+    async function postForm(formId, url){
+        let zone = document.getElementById("flowRateZone")
+        let zoneVal = parseInt(zone.value)
+        flowRate[zoneVal-1] = parseInt(document.getElementById("flowRate").value)
+        let form = document.getElementById(formId)
+        let data = new FormData(form)
+        await fetch(url,{
+            "method": "POST",
+            "body": data,
+        })
+    }
+    flowRateShow()
+</script>
+{% endblock %}
