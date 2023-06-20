@@ -85,8 +85,8 @@ def Web_Server():
     sim_data_lock = threading.Lock()
     sim_dict = {}
 
-    IE_USERNAME = "adam.svoboda@siemens.com"
-    IE_PASSWORD = "kAPPA.lollol456???"
+    IE_USERNAME = "admin"
+    IE_PASSWORD = "admin"
     BASE_URL = "https://" + IED_IP
     timeStart = datetime.datetime.utcnow().isoformat() + "Z"
     timeDict = {}
@@ -1420,13 +1420,13 @@ def Web_Server():
     TOPIC = "ie/d/j/simatic/v1/s7c1/dp/w/PLC0"
     TOPIC2 = "ie/m/j/simatic/v1/s7c1/dp"
     mqtt_sequence = 1
-    client = mqtt.Client()
+    '''client = mqtt.Client()
     client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
     client.on_connect = on_connect
     client.on_message = on_message
     client.connect(MQTT_IP, port=MQTT_PORT)
     client.subscribe(TOPIC2)
-    client.loop_start()
+    client.loop_start()'''
 
     @api.route('/online/smbstation/components/simconfig/simulation/change/keep', methods=['POST'])
     @flask_login.login_required
@@ -1438,7 +1438,7 @@ def Web_Server():
         return ("Success", 200)
 
     def send_to_PLC():
-        nonlocal mqtt_sequence, station, formInfo, tagMap, tagIdMap, TOPIC, client
+        nonlocal mqtt_sequence, station, formInfo, tagMap, tagIdMap, TOPIC#, client
         message = {"seq": mqtt_sequence, "vals": []}
         mqtt_sequence += 1
         timeStamp = datetime.datetime.utcnow().isoformat() + "Z"
@@ -1452,7 +1452,7 @@ def Web_Server():
         for comp, info in compInfo.items():
             message["vals"].append({"id": tagIdMap[tagMap["feed" + comp]], "val": info["Feed Concentration"], "ts": timeStamp, "qc": 3})
         print(json.dumps(message))
-        client.publish(TOPIC, json.dumps(message))
+        #client.publish(TOPIC, json.dumps(message))
 
     @api.route('/online/smbstation/components/simconfig/simulation/change/notkeep', methods=['POST'])
     @flask_login.login_required

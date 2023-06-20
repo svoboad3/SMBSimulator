@@ -24,7 +24,7 @@ class NonLinColumn(GenericColumn):
         self.flowRate = flowRate
         self.Nx = Nx
         self.dt = dt
-        self.flowSpeed = (self.flowRate * 1000 / 3600) / (math.pi * ((self.diameter / 2) ** 2) * self.porosity)
+        self.flowSpeed = (self.flowRate * 1000 / 3600) / ((math.pi * (self.diameter**2) / 4) * self.porosity)
         self.x = np.linspace(0, self.length, self.Nx)
         self.dx = self.length/self.Nx # Calculating space step [mm]
         for comp in self.components:
@@ -37,7 +37,7 @@ class NonLinColumn(GenericColumn):
         for comp, cin in zip(self.components, cins):
             sol = optimize.root(fun=self.function,
                                 x0=comp.c,
-                                method='hybr',
+                                method='krylov',
                                 args=(comp.c, cin, self.porosity, comp.langmuirConst, comp.saturCoef, comp.disperCoef, self.flowSpeed))
             comp.c = sol.x
             output.append(comp.c.tolist())
@@ -45,14 +45,14 @@ class NonLinColumn(GenericColumn):
 
     def function(self, c1, c0, feedCur, porosity, langmuirConst, saturCoef, disperCoef, flowSpeed):
         f = np.zeros(len(c0))  # Preparation of solution vector - will be optimized to 0
-        for i in range(0, len(c0)):  # Main loop trough all the vector's elements
+        for i in range(0, len(c0)):  # Main loop through all the vector's elements
             if i == 0:  # Left boundary
                 f[0] = ((((c0[1] - c0[0]) / self.dx) + ((c1[1] - c1[0]) / self.dx)) / 2) - (flowSpeed * (c1[0] - feedCur))
             elif i > 0 and i < self.Nx - 1:
                 denominator0 = ((1 - porosity) * saturCoef * langmuirConst) / (
-                            (((-langmuirConst * c0[i] + 1) ** 2) * porosity) + 1)
+                            (((langmuirConst * c0[i] + 1) ** 2) * porosity) + 1)
                 denominator1 = ((1 - porosity) * saturCoef * langmuirConst) / (
-                            (((-langmuirConst * c1[i] + 1) ** 2) * porosity) + 1)
+                            (((langmuirConst * c1[i] + 1) ** 2) * porosity) + 1)
                 secondDer0 = (c0[i - 1] - 2 * c0[i] + c0[i + 1]) / (self.dx ** 2)
                 secondDer1 = (c1[i - 1] - 2 * c1[i] + c1[i + 1]) / (self.dx ** 2)
                 firstDer0 = (c0[i + 1] - c0[i - 1]) / (self.dx * 2)
