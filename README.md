@@ -12,7 +12,7 @@ Application for integration of idustrial SMB chromatography processes into Indus
     - [Used components](#used-components)
     - [Further requirements](#further-requirements)
   - [Installation](#installation)
-    - [Configuring the Industrial Edge Databus](#configuring-the-industrial-idge-databus)
+    - [Configuring the Industrial Edge Databus](#configuring-the-industrial-edge-databus)
     - [Configuring the SIMATIC S7 Connector](#configuring-the-simatic-s7-connector)
     - [Configuring the Data Service](#configuring-the-data-service)
   - [Usage](#usage)
