@@ -462,11 +462,17 @@ def Web_Server():
             sim_data_lock.release()
         onlineInitDone = True
 
-    def login_to_Dataservice():
+    def login_to_Dataservice(un=False, pw=False):
         nonlocal BASE_URL, IE_USERNAME, IE_PASSWORD
-        data = '{"username": "' + IE_USERNAME + '","password": "' + IE_PASSWORD + '"}'
+        if not un:
+            un = IE_USERNAME
+        if not pw:
+            pw = IE_PASSWORD
+        data = '{"username": "' + un + '","password": "' + pw + '"}'
         r = requests.post(BASE_URL + '/device/edge/api/v1/login/direct', data=data, verify=False)
         if r.status_code == 200:
+            IE_USERNAME = un
+            IE_PASSWORD = pw
             body = r.json()
             token = body["data"]["access_token"]
             expiration = body["data"]["expires_in"]
@@ -1133,7 +1139,7 @@ def Web_Server():
             return render_template('login.html')
         username = request.form['username']
         password = request.form['password']
-        if username == IE_USERNAME and password == IE_PASSWORD:
+        if login_to_Dataservice(username, password):
             api.config['SECRET_KEY'] = ''.join(random.choices(string.ascii_lowercase, k=32))
             user = User()
             user.id = username

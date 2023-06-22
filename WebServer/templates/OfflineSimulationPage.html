@@ -123,16 +123,19 @@
         printData()
     }
     function printData(){
-        let infoDiv = document.getElementById("info")
+        let infoDiv = '<table><col><colgroup span="2"></colgroup><colgroup span="2"></colgroup><tr><td rowspan="2"></td>' +
+            '<th colspan="2" scope="colgroup">Extract</th><th colspan="2" scope="colgroup">Raffinate</th></tr>\n' +
+            '<tr><th scope="col">Purity</th><th scope="col">Yield</th><th scope="col">Purity</th>\n' +
+            '<th scope="col">Yield</th></tr><tr></tr>'
         for(let i = 0; i < compNames.length; i++){
-            infoDiv.innerHTML += '<p>Avg purity of ' + compNames[i] + ' in Extract = ' + data['purities']['extract'][i].to_fixed(2) +
-                                 '%&emsp;&emsp;&emsp;&emsp;&emsp;Avg purity of ' + compNames[i] + ' in Raffinate = ' + data['purities']['raffinate'][i].to_fixed(2) + '%</p>'
+            infoDiv += '  <tr> <th scope="row">' + compNames[i] + '</th><td>' +
+                data['purities']['extract'][i].toFixed(2) + '</td><td>' +
+                data['yields']['extract'][i].toFixed(2) + '</td><td>' +
+                data['purities']['raffinate'][i].toFixed(2) + '</td><td>' +
+                data['yields']['raffinate'][i].toFixed(2) + '</td></tr>'
         }
-        infoDiv.innerHTML += '<br>'
-        for(let i = 0; i < compNames.length; i++){
-            infoDiv.innerHTML += '<p>Avg yield of ' + compNames[i] + ' in Extract = ' + data['yields']['extract'][i].to_fixed(2) +
-                                 '%&emsp;&emsp;&emsp;&emsp;&emsp;Avg yield of ' + compNames[i] + ' in Raffinate = ' + data['yields']['raffinate'][i].to_fixed(2) + '%</p>'
-        }
+        infoDiv += '</table><br>'
+        document.getElementById("info").innerHTML = infoDiv
         for(let i=1; i < Object.keys(data["final"]).length+1; i++){
             for(let j=0; j < data["final"][i].length; j++){
                 if(charts[i-1][j].data.labels.length != data["final"][i][j].length){

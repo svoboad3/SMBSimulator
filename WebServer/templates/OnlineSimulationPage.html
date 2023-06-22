@@ -352,6 +352,7 @@
         if(liveRafLabel < outputCharts[3].data.labels.slice(-1)[0])
             liveRafLabel = outputCharts[3].data.labels.slice(-1)[0]
     }
+
     async function get_purity_and_yield(link){
         let response = await fetch(link)
         let content = await response.json()
@@ -363,12 +364,18 @@
                 resInnerHtml += '<h5>Forwards Horizon</h5>'
             else if(key === "simdata")
                 resInnerHtml += '<h5>Backwards Horizon</h5>'
+            resInnerHtml += '<table><col><colgroup span="2"></colgroup><colgroup span="2"></colgroup><tr><td rowspan="2"></td>' +
+                '<th colspan="2" scope="colgroup">Extract</th><th colspan="2" scope="colgroup">Raffinate</th></tr>\n' +
+                '<tr><th scope="col">Purity</th><th scope="col">Yield</th><th scope="col">Purity</th>\n' +
+                '<th scope="col">Yield</th></tr><tr></tr>'
             for(let j = 0; j < compNames.length; j++) {
-                resInnerHtml += '<p>' + compNames[j] + ':<br>Purity in extract:&emsp;' + content["purity"][key]["extract"][j].toFixed(2) +
-                    '%&emsp;&emsp;&emsp;&emsp;&emsp;Purity in raffinate:&emsp;' + content["purity"][key]["raffinate"][j].toFixed(2) +
-                    '%<br>Yield of extract:&emsp;' + content["yield"][key]["extract"][j].toFixed(2) +
-                    '%&emsp;&emsp;&emsp;&emsp;&emsp;Yield of raffinate:&emsp;' + content["yield"][key]["raffinate"][j].toFixed(2) +'%</p>'
+                resInnerHtml += '  <tr> <th scope="row">' + compNames[j] + '</th><td>' +
+                    content["purity"][key]["extract"][j].toFixed(2) + '</td><td>' +
+                    content["yield"][key]["extract"][j].toFixed(2) + '</td><td>' +
+                    content["purity"][key]["raffinate"][j].toFixed(2) + '</td><td>' +
+                    content["yield"][key]["raffinate"][j].toFixed(2) + '</td></tr>'
             }
+            resInnerHtml += '</table><br>'
             infoDivs[i].innerHTML = resInnerHtml
         }
     }

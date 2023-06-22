@@ -2,7 +2,7 @@ version: "2.4"
 services:
   smb-simulator:
     build: .
-    image: ie-smb-sim:latest
+    image: 'ie-smb-sim:latest'
     ports:
       - "6969:5000"
     mem_limit: 500mb
