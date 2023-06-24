@@ -5,11 +5,11 @@ import json
 import random
 import string
 import flask_login
-from flask import Flask, flash, request, redirect, url_for, send_file, render_template
-from SMB.MultipleComps.SMBStation import SMBStation
-from SMB.MultipleComps.LinColumn import LinColumn
-from SMB.MultipleComps.NonlinColumn import NonLinColumn
-from SMB.MultipleComps.Tube import Tube
+from flask import Flask, request, redirect, url_for, render_template
+from SMB.SMBStation import SMBStation
+from SMB.LinColumn import LinColumn
+from SMB.NonlinColumn import NonLinColumn
+from SMB.Tube import Tube
 import mongoengine as me
 import paho.mqtt.client as mqtt
 import requests
@@ -18,6 +18,7 @@ import numpy as np
 from WebServer.config import IED_IP
 import scipy.integrate as integrate
 
+# Class implementing web logic
 def Web_Server():
 
     station_lock = threading.Lock()
@@ -95,10 +96,12 @@ def Web_Server():
     event.set()
 
     class User(flask_login.UserMixin):
+        # user class for flask_login
         pass
 
     @login_manager.user_loader
     def load_user(username):
+        # user loader for flask_login
         if not username == IE_USERNAME:
             return
         user = User()
@@ -107,6 +110,7 @@ def Web_Server():
 
     @login_manager.request_loader
     def request_loader(request):
+        # request loader for flask_login
         username = request.form.get('username')
         if not username == IE_USERNAME:
             return
@@ -116,14 +120,18 @@ def Web_Server():
 
     @login_manager.unauthorized_handler
     def unauthorized_handler():
+        # unauthorized handler for flask_login
         return 'Unauthorized', 401
 
     def on_connect(client, userdata, flags, rc):
+        # function called on successful MQTT connection
         nonlocal mqttConnection
         mqttConnection = True
         print("MQTT connection working")
 
     def on_message(client, userdata, message):
+        # function called on received message from MQTT connection
+        # reads tag ids and creates a tag-id map
         nonlocal tagIdMap
         try:
             message = json.loads(message.payload.decode("utf-8"))
@@ -133,6 +141,7 @@ def Web_Server():
             print("message not relevant")
 
     def calculate_latest_time_point():
+        # calculates latest time point of live data, used for time synchronization with simulation
         nonlocal ext_labels, raf_labels, latestTimePointInSec
         for key, val in ext_labels.items():
             if len(val) > 0 and val[-1] > latestTimePointInSec:
@@ -142,6 +151,7 @@ def Web_Server():
                 latestTimePointInSec = val[-1]
 
     def check_dataservice_connection(cookies):
+        # checks if connection to Data Service
         r = requests.get(BASE_URL + '/DataService/Service/IsRunning', cookies=cookies, verify=False)
         if r.status_code == 200:
             return r.json()['isRunning']
@@ -149,6 +159,7 @@ def Web_Server():
 
 
     def calculate_purity_and_yield():
+        # calculates purity and yield of simulation and live data
         nonlocal station, onlineMemory, formInfo, station_lock, onlineMemory_lock
         resultDict = {}
         resultDict["purity"] = {}
@@ -276,6 +287,7 @@ def Web_Server():
         return resultDict
 
     def get_new_horizon_data(label):
+        # returns all sim data from given time label
         nonlocal onlineMemory, formInfo, onlineMemory_lock
         resultDict = {}
         onlineMemory_lock.acquire()
@@ -299,6 +311,7 @@ def Web_Server():
         return resultDict
 
     def get_new_live_data(extlabels, raflabels):
+        # returns all live data from given time labels
         resultDict = {}
         resultDict["extlabels"] = {}
         resultDict["raflabels"] = {}
@@ -343,6 +356,7 @@ def Web_Server():
         return resultDict
 
     def update_online_memory(responseDict):
+        # saves data into online memory object
         nonlocal onlineMemory, formInfo, onlineMemory_lock
         onlineMemory_lock.acquire()
         try:
@@ -388,6 +402,7 @@ def Web_Server():
             onlineMemory_lock.release()
 
     def online_init():
+        # initializes all the data objects
         nonlocal station, formInfo, onlineMemory, onlineInitDone, sim_dict, sim_data_lock, station_lock
         responseDict = {}
         simDict = {}
@@ -463,6 +478,7 @@ def Web_Server():
         onlineInitDone = True
 
     def login_to_Dataservice(un=False, pw=False):
+        # login to Data Service using direct login, returning authentication token and expire time if successful
         nonlocal BASE_URL, IE_USERNAME, IE_PASSWORD
         if not un:
             un = IE_USERNAME
@@ -480,17 +496,20 @@ def Web_Server():
         return {}
 
     def get_PLC_variables(cookies):
+        # sends request to Data Service REST api, returning variables object
         r = requests.get(BASE_URL + '/DataService/Variables', cookies=cookies, verify=False)
         if r.status_code == 200:
             return r.json()
         return {}
 
     def get_PLC_tags(cookies):
+        # converts variables objects to list of tags
         variables = get_PLC_variables(cookies)
         tags = [var["variableName"] for var in variables["variables"]]
         return tags
 
     def get_data_all(tag, cookies, time):
+        # sends request to Data Service REST api, returning values of given tag starting in given time
         nonlocal timeStart, formInfo
         variables = get_PLC_variables(cookies)
         varID = ""
@@ -511,6 +530,7 @@ def Web_Server():
             return (data3, labels, datetime.datetime.utcnow().isoformat() + "Z")
 
     def get_data_single(tag, cookies):
+        # sends request to Data Service REST api, returning latest values of given tag
         nonlocal BASE_URL, IE_USERNAME, IE_PASSWORD
         variables = get_PLC_variables(cookies)
         varID = ""
@@ -532,6 +552,7 @@ def Web_Server():
         return 0
 
     def update_live_data(cookies):
+        # function updating all data, getting newest values from Data Service and calling step on SMB station
         nonlocal station, formInfo, liveInfo, timeDict, tagMap, ext_dict, raf_dict, raf_labels, ext_labels,\
             latestTimePointInSec, sim_dict, onlineInitDone, live_data_lock, sim_data_lock, station_lock
         for var, tag in tagMap.items():
@@ -598,6 +619,7 @@ def Web_Server():
                     station_lock.release()
 
     def convert_data():
+        # creates a response object to return and saves data to online memory object
         nonlocal station, running, formInfo, tagMap, liveInfo, ext_dict, raf_dict, ext_labels, raf_labels,\
             stationSaveState, sim_dict, sim_data_lock, live_data_lock, onlineInitDone
         if onlineInitDone:
@@ -649,6 +671,7 @@ def Web_Server():
                 sim_data_lock.release()
             update_online_memory(responseDict)
     def update_station():
+        # updates flow rates of SMB station
         nonlocal formInfo, station
         station.setFlowRateZone(1, formInfo["flowRate1"]*formInfo["flowRateUnits"])
         station.setFlowRateZone(2, formInfo["flowRate2"]*formInfo["flowRateUnits"])
@@ -658,6 +681,7 @@ def Web_Server():
         station.initCols()
 
     def update_feed_concentrations():
+        # updates feed concentrations of SMB station
         nonlocal formInfo, tagMap, station, station_lock
         print("calling update feed concentrations")
         if not stationSaveState:
@@ -673,6 +697,7 @@ def Web_Server():
             finally:
                 station_lock.release()
     def fix_flowrates():
+        # calculates flow rate in zones from flow rates of input streams
         nonlocal formInfo
         formInfo["flowRate1"] = formInfo["flowRateRecycle"] + formInfo["flowRateEluent"]
         formInfo["flowRate2"] = formInfo["flowRate1"] - formInfo["flowRateExtract"]
@@ -682,6 +707,7 @@ def Web_Server():
             print("flow rates dont match up")
 
     def add_column(request):
+        # adds column to SMB station from form data in request
         nonlocal station, linCol, nonLinCol, formInfo, station_lock
         formInfo["zone"] = int(request.form.get("zone"))
         formInfo["isotherm"] = request.form.get("isotherm")
@@ -713,6 +739,7 @@ def Web_Server():
             station_lock.release()
 
     def add_component(request):
+        # adds components to SMB station from form data in request
         nonlocal station, formInfo
         name = request.form.get("name")
         feedConc = float(request.form.get("feedConc"))
@@ -727,32 +754,22 @@ def Web_Server():
         disperCoef = float(request.form.get("disperCoef"))
         station_lock.acquire()
         try:
-            station.addComponent(name, feedConc=feedConc, henryConst=henryConst, disperCoef=disperCoef, langmuirConst=langmuirConst, saturCoef=saturCoef)
+            station.createComponent(name, feedConc=feedConc, henryConst=henryConst, disperCoef=disperCoef, langmuirConst=langmuirConst, saturCoef=saturCoef)
         finally:
             station_lock.release()
 
     def periodic_task(func, period, *args):
+        # wrap function calling given fucntion periodicaly
         nonlocal event
         while not event.is_set():
             print("period", period)
             func(*args)
             time.sleep(period)
 
-    class DBExperiment(me.Document):
-        uniquename = me.StringField(required=True, unique=True)
-        name = me.StringField(required=True)
-        experiment = me.StringField(required=True)
-
-    class DBResult(me.Document):
-        thr_id = me.IntField(required=True, unique=True)
-        name = me.StringField(required=True)
-        experiments = me.ListField(me.ReferenceField(DBExperiment))
-        results = me.DictField(required=True)
-
-
     @api.route('/smbstation/components/simconfig/simulation', methods=['DELETE'])
     @flask_login.login_required
     def delete_simulation_data():
+        # http delete response function, deletes simulation
         nonlocal station, formInfo, linCol, nonLinCol, offlineSimDone, offlineSimResult, onlineInitDone, stationSaveState, \
             liveInfo, running, mqttConnection, tagMap, onlineMemory, ext_dict, ext_labels, raf_dict, raf_labels, timeDict, \
             dataserviceThreadHandler, event, station_lock, live_data_lock, sim_data_lock, sim_dict
@@ -797,6 +814,7 @@ def Web_Server():
     @api.route('/offline/smbstation/components/simconfig/simulation/data', methods=['GET'])
     @flask_login.login_required
     def get_simulation_offline_data():
+        # http get response function, responses with offline sim data
         nonlocal station, offlineSimDone, offlineSimResult, station_lock
         if not offlineSimDone:
             responseDict = {}
@@ -861,6 +879,7 @@ def Web_Server():
 
     @api.route('/online/smbstation/components/simconfig/simulation/initData', methods=['GET'])
     def get_simulation_online_init():
+        # http get response function, initializes data objects and returns online data
         nonlocal station, running, formInfo, onlineInitDone, onlineMemory
         if not onlineInitDone:
             online_init()
@@ -870,6 +889,7 @@ def Web_Server():
 
     @api.route('/online/smbstation/components/simconfig/simulation/data', methods=['POST'])
     def get_simulation_online_data():
+        # http post response function, responses with online data and updates latest labels
         nonlocal station, running, formInfo, tagMap, liveInfo, ext_dict, raf_dict, ext_labels, raf_labels,\
             stationSaveState, sim_dict, sim_data_lock, live_data_lock
         body = request.get_json()
@@ -889,6 +909,7 @@ def Web_Server():
 
     @api.route('/online/smbstation/components/simconfig/simulation/changesCommited', methods=['GET'])
     def get_simulation_online_change_commit():
+        # http get response function, responses with whether changes time period already ran out
         responseDict = {}
         if "countdown" in stationSaveState and stationSaveState["countdown"] <= 0:
             responseDict["commit"] = False
@@ -898,11 +919,13 @@ def Web_Server():
 
     @api.route('/online/smbstation/components/simconfig/simulation/purityandyield', methods=['GET'])
     def get_simulation_online_purity_and_yield():
+        # http get response function, responses with purity and yield information
         responseDict = calculate_purity_and_yield()
         return json.dumps(responseDict)
 
     @api.route('/online/smbstation/components/simconfig/simulation', methods=['GET'])
     def get_simulation_online():
+        # http get response function, responses with online simulation page
         nonlocal station, running, formInfo
         if running:
             return render_template('OnlineSimulationPage.html', formInfo=formInfo, compInfo=station.getCompInfo(), auth=flask_login.current_user.is_authenticated)
@@ -911,6 +934,7 @@ def Web_Server():
     @api.route('/offline/smbstation/components/simconfig/export', methods=['GET'])
     @flask_login.login_required
     def get_export():
+        # http get response function, responses with json string of sim settings
         nonlocal station, formInfo, station_lock
         export = {}
         station_lock.acquire()
@@ -925,11 +949,13 @@ def Web_Server():
     @api.route('/offline/import', methods=['GET'])
     @flask_login.login_required
     def get_import():
+        # http get response function, responses with offline import page
         return render_template('Import.html', online=False)
 
     @api.route('/offline/import', methods=['POST'])
     @flask_login.login_required
     def post_import():
+        # http post response function, imports settings from import string
         nonlocal station, linCol, nonLinCol, station_lock
         try:
             data = json.loads(request.form.get("importString"))
@@ -953,7 +979,7 @@ def Web_Server():
                     langmuirConst = data['comp'][comp]['Langmuir Constant']
                     saturCoef = data['comp'][comp]['Saturation Coefficient']
                     disperCoef = data['comp'][comp]['Dispersion Coefficient']
-                    station.addComponent(comp, feedConc=feedConc, henryConst=henryConst, disperCoef=disperCoef, langmuirConst=langmuirConst, saturCoef=saturCoef)
+                    station.createComponent(comp, feedConc=feedConc, henryConst=henryConst, disperCoef=disperCoef, langmuirConst=langmuirConst, saturCoef=saturCoef)
                 formInfo["flowRate1"] = data['settings']['Flow Rate']['1']
                 station.setFlowRateZone(1, data['settings']['Flow Rate']['1'])
                 formInfo["flowRate2"] = data['settings']['Flow Rate']['2']
@@ -978,11 +1004,13 @@ def Web_Server():
     @api.route('/online/import', methods=['GET'])
     @flask_login.login_required
     def get_import_online():
+        # http get response function, responses with online import page
         return render_template('Import.html', online=True)
 
     @api.route('/online/import', methods=['POST'])
     @flask_login.login_required
     def post_import_online():
+        # http post response function, imports settings from import string
         nonlocal station, linCol, nonLinCol, station_lock
         try:
             data = json.loads(request.form.get("importString"))
@@ -1005,7 +1033,7 @@ def Web_Server():
                     langmuirConst = data['comp'][comp]['Langmuir Constant']
                     saturCoef = data['comp'][comp]['Saturation Coefficient']
                     disperCoef = data['comp'][comp]['Dispersion Coefficient']
-                    station.addComponent(comp, henryConst=henryConst, disperCoef=disperCoef, langmuirConst=langmuirConst, saturCoef=saturCoef)
+                    station.createComponent(comp, henryConst=henryConst, disperCoef=disperCoef, langmuirConst=langmuirConst, saturCoef=saturCoef)
                 formInfo["dt"] = data['settings']['dt']
                 station.setdt(data['settings']['dt'])
                 formInfo["Nx"] = data['settings']['Nx']
@@ -1020,6 +1048,7 @@ def Web_Server():
     @api.route('/offline/smbstation/components', methods=['GET'])
     @flask_login.login_required
     def get_components():
+        # http get response function, response with offline adding components page
         nonlocal station, formInfo, running
         return render_template('AddingComponents.html', compInfo=station.getCompInfo(), linCol=linCol,
                                nonLinCol=nonLinCol, running=running, online=False)
@@ -1027,12 +1056,14 @@ def Web_Server():
     @api.route('/offline/smbstation/components', methods=['POST'])
     @flask_login.login_required
     def post_add_component():
+        # http post response function, imports components from form
         add_component(request)
         return redirect(url_for('get_components'))
 
     @api.route('/online/smbstation/components', methods=['GET'])
     @flask_login.login_required
     def get_components_online():
+        # http get response function, response with online adding components page
         nonlocal station, formInfo, running
         return render_template('AddingComponents.html', compInfo=station.getCompInfo(), linCol=linCol,
                                nonLinCol=nonLinCol, running=running, online=True)
@@ -1040,17 +1071,20 @@ def Web_Server():
     @api.route('/online/smbstation/components', methods=['POST'])
     @flask_login.login_required
     def post_add_component_online():
+        # http post response function, imports components from form
         add_component(request)
         return redirect(url_for('get_components_online'))
 
     @api.route('/offline/peimport', methods=['GET'])
     @flask_login.login_required
     def get_pe_import():
+        # http get response function, returns offline import page for parameter estimator string
         return render_template('ImportPE.html', importUrl=url_for('post_pe_import'))
 
     @api.route('/offline/peimport', methods=['POST'])
     @flask_login.login_required
     def post_pe_import():
+        # http post response function, imports settings from import string
         nonlocal station, running, linCol, nonLinCol, station_lock
         try:
             resData = json.loads(request.form.get("resImportString"))
@@ -1082,11 +1116,13 @@ def Web_Server():
     @api.route('/online/peimport', methods=['GET'])
     @flask_login.login_required
     def get_pe_import_online():
+        # http get response function, returns online import page for parameter estimator string
         return render_template('ImportPE.html', importUrl=url_for('post_pe_import_online'))
 
     @api.route('/online/peimport', methods=['POST'])
     @flask_login.login_required
     def post_pe_import_online():
+        # http post response function, imports settings from import string
         nonlocal station, running, linCol, nonLinCol, station_lock
         try:
             resData = json.loads(request.form.get("resImportString"))
@@ -1116,6 +1152,7 @@ def Web_Server():
     @api.route('/smbstation/components/<idx>', methods=['DELETE'])
     @flask_login.login_required
     def delete_component(idx):
+        # http delete response function, removes component
         nonlocal station, linCol, nonLinCol, formInfo, station_lock
         station_lock.acquire()
         try:
@@ -1127,11 +1164,13 @@ def Web_Server():
     @api.route('/logout')
     @flask_login.login_required
     def logout():
+        # http get response function, logs out user
         flask_login.logout_user()
         return redirect(url_for('get_main_page'))
 
     @api.route('/login', methods=['GET', 'POST'])
     def get_login_page():
+        # http  response function, logs in user
         nonlocal IE_PASSWORD, IE_USERNAME, api
         if request.method == 'GET':
             if flask_login.current_user.is_authenticated:
@@ -1149,11 +1188,13 @@ def Web_Server():
 
     @api.route('/', methods=['GET'])
     def get_main_page():
+        # http get response function, returns main page
         return render_template('Index.html', auth=flask_login.current_user.is_authenticated)
 
     @api.route('/offline/smbstation', methods=['GET'])
     @flask_login.login_required
     def get_SMB():
+        # http get response function, returns smb station page
         nonlocal station, formInfo, running
         return render_template('SMBStation.html', stationInfo=station.getColInfo(), readyNext=station.getZoneReady(),
                                formInfo=formInfo, running=running)
@@ -1161,12 +1202,14 @@ def Web_Server():
     @api.route('/offline/smbstation/components/simconfig', methods=['GET'])
     @flask_login.login_required
     def get_SMB_config():
+        # http get response function, returns simulation definition page for offline sim
         nonlocal station, formInfo, running
         return render_template('SimulationDefinition.html', stationInfo=station.getColInfo(), readyNext=station.getZoneReady(), formInfo=formInfo, running=running)
 
     @api.route('/offline/smbstation/components/simconfig', methods=['POST'])
     @flask_login.login_required
     def post_create_SMB():
+        # http post response function, creates simulation
         nonlocal station, station_lock
         formInfo["flowRate1"] = float(request.form.get("flowRate1"))
         formInfo["flowRate2"] = float(request.form.get("flowRate2"))
@@ -1192,12 +1235,14 @@ def Web_Server():
     @api.route('/offline/column', methods=['POST'])
     @flask_login.login_required
     def post_add_column():
+        # http post response function, adds column to smb station
         add_column(request)
         return redirect(url_for('get_SMB'))
 
     @api.route('/column/<zone>/<idx>', methods=['DELETE'])
     @flask_login.login_required
     def delete_column(zone, idx):
+        # http delete response function, removes column to smb station
         nonlocal station, linCol, nonLinCol, formInfo
         station.delColZone(int(zone), int(idx))
         return ("", 204)
@@ -1205,6 +1250,7 @@ def Web_Server():
     @api.route('/online/smbstation/components/plcmaping', methods=['GET'])
     @flask_login.login_required
     def get_online_plcmaping():
+        # http get response function, returns tag mapping page for online sim
         nonlocal formInfo, station
         try:
             tags = get_PLC_tags(login_to_Dataservice())
@@ -1216,6 +1262,7 @@ def Web_Server():
     @api.route('/online/smbstation/components/plcmaping', methods=['POST'])
     @flask_login.login_required
     def post_online_plcmaping():
+        # http post response function, maps tags to sim parameters and initializes sim
         nonlocal tagMap, timeStart, dataserviceThreadHandler, formInfo, event, running, station_lock
         compList = list(station.getCompInfo().keys())
         cookies = login_to_Dataservice()
@@ -1299,18 +1346,21 @@ def Web_Server():
     @api.route('/online/smbstation', methods=['GET'])
     @flask_login.login_required
     def get_SMB_online():
+        # http get response function, returns smb station page of online sim
         nonlocal station, formInfo, running
         return render_template('SMBStation.html', stationInfo=station.getColInfo(), readyNext=station.getZoneReady(),
                                formInfo=formInfo, running=running, online=True)
 
     @api.route('/online/connection', methods=['GET'])
     def get_dataservice_connection():
+        # http get response function, returns if Data Service connection is live
         if check_dataservice_connection(login_to_Dataservice()):
             return "Yes"
         return "No"
     @api.route('/online/column', methods=['POST'])
     @flask_login.login_required
     def post_add_column_online():
+        # http post response function, adds column to smb station
         add_column(request)
         return redirect(url_for('get_SMB_online'))
 
@@ -1330,6 +1380,7 @@ def Web_Server():
     @api.route('/offline/smbstation/components/simconfig/simulation/flowrate', methods=['POST'])
     @flask_login.login_required
     def post_simulation_flowrate():
+        # http post response function, updates flow rates of smb station
         nonlocal station, formInfo, station_lock
         try:
             formInfo["zone"] = int(request.form.get("flowRateZone"))
@@ -1348,6 +1399,7 @@ def Web_Server():
     @api.route('/offline/smbstation/components/simconfig/simulation/switch', methods=['POST'])
     @flask_login.login_required
     def post_simulation_switch():
+        # http post response function, updates switch interval of smb station
         nonlocal station, formInfo, station_lock
         try:
             formInfo["switch"] = float(request.form.get("switch"))
@@ -1365,6 +1417,7 @@ def Web_Server():
     @api.route('/online/smbstation/components/simconfig/simulation/change', methods=['POST'])
     @flask_login.login_required
     def post_simulation_change_online():
+        # http post response function, "soft" updates online sim parameters
         nonlocal station, formInfo, stationSaveState, station_lock
         stationSaveState["horizon"] = formInfo["horizon"]
         stationSaveState["countdown"] = formInfo["horizon"]
@@ -1398,6 +1451,7 @@ def Web_Server():
     @api.route('/online/smbstation/components/simconfig/simulation/forcechange', methods=['POST'])
     @flask_login.login_required
     def post_simulation_force_change_online():
+        # http post response function, "force" updates online sim parameters
         nonlocal station, formInfo, stationSaveState, station_lock
         formInfo["flowRateEluent"] = float(request.form.get("flowRateEluent"))
         formInfo["flowRateExtract"] = float(request.form.get("flowRateExtract"))
@@ -1437,6 +1491,7 @@ def Web_Server():
     @api.route('/online/smbstation/components/simconfig/simulation/change/keep', methods=['POST'])
     @flask_login.login_required
     def post_simulation_change_keep_online():
+        # http post response function, keeps "soft" updade
         nonlocal station, formInfo, stationSaveState
         formInfo["secondLastChange"] = formInfo["lastChange"]
         send_to_PLC()
@@ -1444,6 +1499,7 @@ def Web_Server():
         return ("Success", 200)
 
     def send_to_PLC():
+        # publish parameter update message to mqtt client
         nonlocal mqtt_sequence, station, formInfo, tagMap, tagIdMap, TOPIC, client
         message = {"seq": mqtt_sequence, "vals": []}
         mqtt_sequence += 1
@@ -1463,6 +1519,7 @@ def Web_Server():
     @api.route('/online/smbstation/components/simconfig/simulation/change/notkeep', methods=['POST'])
     @flask_login.login_required
     def post_simulation_change_notkeep_online():
+        # http post response function, rollback "soft" updade
         nonlocal station, formInfo, stationSaveState, station_lock
         formInfo["flowRate1"] = stationSaveState["flowRate1"]
         formInfo["flowRate2"] = stationSaveState["flowRate2"]
@@ -1497,6 +1554,7 @@ def Web_Server():
     @api.route('/offline/smbstation/components/simconfig/simulation', methods=['GET'])
     @flask_login.login_required
     def get_simulation():
+        # http get response function, response offline sim page
         nonlocal station, running, formInfo
         station.initCols()
         running = True

@@ -1,41 +1,44 @@
-from SMB.MultipleComps.LinColumn import LinColumn
-from SMB.MultipleComps.NonlinColumn import NonLinColumn
-from SMB.MultipleComps.Tube import Tube
 from SMB.GenericColumn import GenericColumn
-from SMB.MultipleComps.Component import Component
+from SMB.Component import Component
 import copy as cp
 
 class SMBStation:
     def __init__(self):
-        self.zones = {}
-        self.zones[1] = []
-        self.zones[2] = []
-        self.zones[3] = []
-        self.zones[4] = []
-        self.cins = {}
-        self.cins[1] = []
-        self.cins[2] = []
-        self.cins[3] = []
-        self.cins[4] = []
-        self.flowRates = {}
-        self.flowRates[1] = -1
-        self.flowRates[2] = -1
-        self.flowRates[3] = -1
-        self.flowRates[4] = -1
-        self.outVals = []
-        self.settings = {}
-        self.components = []
-        self.switchingEnabled = False
-        self.interval = -1
-        self.countdown = -1
-        self.timer = 0
-        self.colCount = 0
-        self.switchState = 0
+        # Initialize attributes
+        self.zones = {}  # Dictionary to store zones and their columns
+        self.zones[1] = []  # Columns in zone 1
+        self.zones[2] = []  # Columns in zone 2
+        self.zones[3] = []  # Columns in zone 3
+        self.zones[4] = []  # Columns in zone 4
+
+        self.cins = {}  # Dictionary to store inlet concentrations for each zone
+        self.cins[1] = []  # Inlet concentrations for zone 1
+        self.cins[2] = []  # Inlet concentrations for zone 2
+        self.cins[3] = []  # Inlet concentrations for zone 3
+        self.cins[4] = []  # Inlet concentrations for zone 4
+
+        self.flowRates = {}  # Dictionary to store flow rates for each zone
+        self.flowRates[1] = -1  # Flow rate for zone 1
+        self.flowRates[2] = -1  # Flow rate for zone 2
+        self.flowRates[3] = -1  # Flow rate for zone 3
+        self.flowRates[4] = -1  # Flow rate for zone 4
+
+        self.outVals = []  # List to store outlet concentrations
+        self.settings = {}  # Dictionary to store simulation settings
+        self.components = []  # List to store components
+        self.switchingEnabled = False  # Flag to indicate if column rotation is enabled
+        self.interval = -1  # Switch interval for column rotation
+        self.countdown = -1  # Countdown timer for column rotation
+        self.timer = 0  # Timer for simulation
+        self.colCount = 0  # Number of columns
+        self.switchState = 0  # Current state of column rotation
 
     def setFlowRateZone(self, zone, flowRate):
+        # Set flow rate for a specific zone
         self.flowRates[zone] = flowRate
 
     def setSwitchInterval(self, s):
+        # Set switch interval for column rotation
         self.interval = s
         self.countdown = s
         if s <= 0:
@@ -44,13 +47,15 @@ class SMBStation:
             self.switchingEnabled = True
 
     def setdt(self, dt):
+        # Set the time step for the simulation
         self.settings['dt'] = dt
 
     def setNx(self, Nx):
+        # Set the number of grid points for the simulation
         self.settings['Nx'] = Nx
 
-    # adds column and a tube before it
     def addColZone(self, zone, col, tube):
+        # Add a column and a tube before it to a specific zone
         for comp in self.components:
             col.add(comp.copy())
             tube.add(comp.copy())
@@ -60,9 +65,8 @@ class SMBStation:
         self.cins[zone].append([])
         self.colCount += 1
 
-
-    # deletes column and a tube before it
     def delColZone(self, zone, idx):
+        # Delete a column and a tube before it from a specific zone
         del self.zones[zone][idx]
         if idx%2 == 1:
             del self.zones[zone][idx-1]
@@ -70,7 +74,8 @@ class SMBStation:
             del self.zones[zone][idx]
         self.colCount -= 1
 
-    def addComponent(self, name, feedConc = 0, henryConst = -1, disperCoef = -1, langmuirConst = -1, saturCoef = -1):
+    def createComponent(self, name, feedConc = 0, henryConst = -1, disperCoef = -1, langmuirConst = -1, saturCoef = -1):
+        # Create a component to the SMB station
         comp = Component(name)
         comp.feedConc = feedConc
         comp.henryConst = henryConst
@@ -83,13 +88,15 @@ class SMBStation:
                 col.add(comp.copy())
 
     def delComponent(self, idx):
+        # Delete a component from the SMB station
         del self.components[idx]
         for zone in self.zones:
             for col in self.zones[zone]:
                 col.delByIdx(idx)
 
     def updateComponentByName(self, name, feedConc = 0, henryConst = -1, disperCoef = -1, langmuirConst = -1, saturCoef = -1):
-        print(name, feedConc)
+        # Update the properties of a component based on its name
+        # Finds component with given name and updates it
         for idx, comp in enumerate(self.components):
             if comp.name == name:
                 if feedConc > 0:
@@ -106,6 +113,7 @@ class SMBStation:
                     for col in self.zones[zone]:
                         col.updateByIdx(idx, comp)
                 return
+        # Creates component if it doesn't exists
         comp = Component(name)
         comp.feedConc = feedConc
         comp.henryConst = henryConst
@@ -118,6 +126,7 @@ class SMBStation:
                 col.add(comp.copy())
 
     def updateComponentByIndex(self, idx, feedConc = 0, henryConst = -1, disperCoef = -1, langmuirConst = -1, saturCoef = -1):
+        # Update the properties of a component based on its index
         comp = self.components[idx]
         if feedConc > 0:
             comp.feedConc = feedConc
@@ -134,12 +143,14 @@ class SMBStation:
                 col.updateByIdx(idx, comp)
 
     def setPorosity(self, porosity):
+        # Set the porosity of all the columns in the SMB station
         for zone in self.zones:
             for col in self.zones[zone]:
                 if isinstance(col, GenericColumn):
                     col.porosity = porosity
 
     def initCols(self):
+        # Initialize the columns in the SMB station
         for zone in self.zones:
             for idx, col in enumerate(self.zones[zone]):
                 col.init(self.flowRates[zone], self.settings['dt'], self.settings['Nx'])
@@ -147,6 +158,7 @@ class SMBStation:
                 self.outVals = [0] * len(col.components)
 
     def step(self, steps = 1):
+        # Perform one or more simulation steps
         cins = [comp.feedConc for comp in self.components]
         for x in range(steps):
             self.timer += self.settings['dt']
@@ -175,6 +187,7 @@ class SMBStation:
         return res
 
     def rotate(self):
+        # Rotate the columns in the SMB station based on the switch interval
         tmptube = self.zones[1][0]
         tmpcol = self.zones[1][1]
         self.zones[1].pop(0)
@@ -197,6 +210,7 @@ class SMBStation:
         self.switchState = (self.switchState+1)%self.colCount
 
     def getColInfo(self):
+        # Get information about each column in each zone
         info = {}
         for zone in self.zones:
             info[zone] = []
@@ -205,6 +219,7 @@ class SMBStation:
         return info
 
     def getCompInfo(self):
+        # Get information about each component
         info = {}
         for comp in self.components:
             info[comp.name] = {}
@@ -216,12 +231,14 @@ class SMBStation:
         return info
 
     def getZoneReady(self):
+        # Check if all zones have at least one column
         for zone in self.zones:
             if len(self.zones[zone]) == 0:
                 return False
         return True
 
     def getSettingsInfo(self):
+        # Get information about the settings of the station
         info = {}
         info['Flow Rate'] = self.flowRates
         info['dt'] = self.settings['dt']
@@ -232,6 +249,7 @@ class SMBStation:
         return info
 
     def deepCopy(self):
+        # Create a deep copy of the SMBStation object
         copy = SMBStation()
         for zone in self.zones:
             for col in self.zones[zone]:

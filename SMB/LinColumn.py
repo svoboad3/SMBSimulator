@@ -1,26 +1,17 @@
 import numpy as np
 import math
 from scipy import linalg
-from SMB.MultipleComps.Component import Component
 from SMB.GenericColumn import GenericColumn
 
-
+# Implementation of column using equilibrium dispersion model with linear isotherm
 class LinColumn(GenericColumn):
     def __init__(self, length, diameter, porosity):
+        # Initialize LinColumn object by calling the parent class constructor and updating the column type
         GenericColumn.__init__(self, length, diameter, porosity)
         self.columnType = "EDM with Linear isotherm"
-        self.components = []
-
-    def add(self, comp):
-        self.components.append(comp)
-
-    def delByIdx(self, idx):
-        del self.components[idx]
-
-    def updateByIdx(self, idx, comp):
-        self.components[idx].update(comp)
 
     def init(self, flowRate, dt, Nx):
+        # Initialize the LinColumn with given flow rate, time step, and number of elements
         self.flowRate = flowRate
         self.Nx = Nx
         self.dt = dt
@@ -29,28 +20,23 @@ class LinColumn(GenericColumn):
         self.dx = self.length / self.Nx  # Calculating space step [mm]
 
         for comp in self.components:
-            comp.C1 = (1 / comp.disperCoef) + (
-                        (1 + self.porosity) * comp.henryConst / (self.porosity * comp.disperCoef))
+            comp.C1 = (1 / comp.disperCoef) + ((1 + self.porosity) * comp.henryConst / (self.porosity * comp.disperCoef))
             comp.C2 = self.flowSpeed / comp.disperCoef
-            # c[0,0] = feed[0]
+
             # Crank-Nicolson matrixes preparation
-            # A.c(t+1) = B.c(t)x, where c(t+1) and c(t) are vectors of c(x) values
-            # Preparation of boudaries in matrix A
             comp.A = np.zeros((self.Nx, self.Nx))  # A matrix data structure
-            comp.A[0, 0] = ((2 / (self.dx ** 2)) + (comp.C1 / self.dt)) / (
-                        -(1 / (self.dx ** 2)) - (comp.C2 / (2 * self.dx)))  # Left boundary
-            comp.A[0, 1] = 1 - (((1 / (self.dx ** 2)) - (comp.C2 / (2 * self.dx))) / (
-                        -(1 / (self.dx ** 2)) - (comp.C2 / (2 * self.dx))))  # Left boundary
-            comp.A[self.Nx - 1, self.Nx - 2] = (((1 / (self.dx ** 2)) + (comp.C2 / (2 * self.dx))) / (
-                    -(1 / (self.dx ** 2)) + (comp.C2 / (2 * self.dx)))) - 1  # Right boundary
-            comp.A[self.Nx - 1, self.Nx - 1] = -((2 / (self.dx ** 2)) + (comp.C1 / self.dt)) / (
-                        -(1 / (self.dx ** 2)) + (comp.C2 / (2 * self.dx)))  # Right Boundary
-            # Preparation of boudaries in matrix B
             comp.B = np.zeros((self.Nx, self.Nx))  # B matrix data structure
-            comp.B[0, 0] = (2 * self.dx * self.flowSpeed) + (
-                        (comp.C1 / self.dt) / (-(1 / (self.dx ** 2)) - (comp.C2 / (2 * self.dx))))  # Left boundary
-            comp.B[self.Nx - 1, self.Nx - 1] = -(
-                        (comp.C1 / self.dt) / (-(1 / (self.dx ** 2)) + (comp.C2 / (2 * self.dx))))  # Right boundary
+
+            # Preparation of boundaries in matrix A
+            comp.A[0, 0] = ((2 / (self.dx ** 2)) + (comp.C1 / self.dt)) / (-(1 / (self.dx ** 2)) - (comp.C2 / (2 * self.dx)))  # Left boundary
+            comp.A[0, 1] = 1 - (((1 / (self.dx ** 2)) - (comp.C2 / (2 * self.dx))) / (-(1 / (self.dx ** 2)) - (comp.C2 / (2 * self.dx))))  # Left boundary
+            comp.A[self.Nx - 1, self.Nx - 2] = (((1 / (self.dx ** 2)) + (comp.C2 / (2 * self.dx))) / (-(1 / (self.dx ** 2)) + (comp.C2 / (2 * self.dx)))) - 1  # Right boundary
+            comp.A[self.Nx - 1, self.Nx - 1] = -((2 / (self.dx ** 2)) + (comp.C1 / self.dt)) / (-(1 / (self.dx ** 2)) + (comp.C2 / (2 * self.dx)))  # Right Boundary
+
+            # Preparation of boundaries in matrix B
+            comp.B[0, 0] = (2 * self.dx * self.flowSpeed) + ((comp.C1 / self.dt) / (-(1 / (self.dx ** 2)) - (comp.C2 / (2 * self.dx))))  # Left boundary
+            comp.B[self.Nx - 1, self.Nx - 1] = -((comp.C1 / self.dt) / (-(1 / (self.dx ** 2)) + (comp.C2 / (2 * self.dx))))  # Right boundary
+
             # Filling up Matrixes A and B
             for i in range(1, self.Nx - 1):
                 comp.A[i, i - 1] = - ((self.dt / (2 * self.dx)) * ((1 / (comp.C1 * self.dx)) + (comp.C2 / 2)))
@@ -59,13 +45,17 @@ class LinColumn(GenericColumn):
                 comp.B[i, i - 1] = ((self.dt / (2 * self.dx)) * ((1 / (comp.C1 * self.dx)) + (comp.C2 / 2)))
                 comp.B[i, i] = 1 - (self.dt / (comp.C1 * self.dx ** 2))
                 comp.B[i, i + 1] = (self.dt / (2 * self.dx)) * ((1 / (comp.C1 * self.dx)) - (comp.C2 / 2))
+
             comp.A_diag = self.diagonal_form(comp.A)
             comp.Aabs = np.abs(comp.A)
             comp.Babs = np.abs(comp.B)
+
+            # Initializes result matrix in component with zeroes if not yet present
             if not hasattr(comp, 'c'):
                 comp.c = np.zeros(len(self.x))
 
     def step(self, cins):
+        # Perform a step in the LinColumn by solving the system of equations
         output = []
         for comp, cin in zip(self.components, cins):
             b = comp.B.dot(comp.c)
@@ -76,7 +66,7 @@ class LinColumn(GenericColumn):
 
     def diagonal_form(self, a, lower=1, upper=1):
         # Transforms banded matrix into diagonal ordered form
-        # allows to use scipy.linalg.solve_banded
+        # allows using scipy.linalg.solve_banded
         n = a.shape[1]
         assert (np.all(a.shape == (n, n)))
         ab = np.zeros((2 * n - 1, n))
@@ -94,6 +84,7 @@ class LinColumn(GenericColumn):
         return ab
 
     def deepCopy(self):
+        # Create a deep copy of the LinColumn object
         copy = LinColumn(self.length, self.diameter, self.porosity)
         copy.columnType = self.columnType
         copy.flowRate = self.flowRate

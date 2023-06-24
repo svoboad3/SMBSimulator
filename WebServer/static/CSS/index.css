@@ -224,3 +224,15 @@ textarea {
 .bar-right {
     float: right  !important;
 }
+
+table {border-collapse: collapse; font-family: helvetica; margin-top: 3em}
+td, th, tr {border:  1px solid;
+      padding: 10px;
+      min-width: 150px;
+      background: white;
+      box-sizing: border-box;
+      text-align: left;
+}
+th{
+    background: #00A1D1;
+}
