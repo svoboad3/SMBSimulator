@@ -96,6 +96,22 @@ IE SMB-sim application requires Data Service application to be installed and con
 
 ## Usage
 
+Application page can be accessed through IED in Apps tab.
+
+First, login is required with same credentials as login to IED.
+
+Then you can choose between offline and online simulation. Offline being just the simulation until specified time. Online running alongside real SMB process.
+
+Next define SMB station by creating columns in specific zones. After there is at least one column in each zone, you can continue.
+
+Next define separation mixture by adding components.
+
+Next step in offline simulation is to define flow rates and model calculation parameters.
+
+Next step in online simulation is to map tags to simulation parameters and define time and diferences.
+
+After that you can launch simulation.
+
 ### Dependencies
 
 In order for this application to run properly on Industrial Edge Device (IED), the following applications must be installed and configured on the IED
