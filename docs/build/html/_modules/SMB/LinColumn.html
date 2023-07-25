@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SMB.LinColumn &#8212; SMB-Sim 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for SMB.LinColumn</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="kn">from</span> <span class="nn">SMB.GenericColumn</span> <span class="kn">import</span> <span class="n">GenericColumn</span>
+
+<div class="viewcode-block" id="LinColumn"><a class="viewcode-back" href="../../SMB.html#SMB.LinColumn.LinColumn">[docs]</a><span class="k">class</span> <span class="nc">LinColumn</span><span class="p">(</span><span class="n">GenericColumn</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of column using equilibrium dispersion model with linear isotherm&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">diameter</span><span class="p">,</span> <span class="n">porosity</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize LinColumn object by calling the parent class constructor and updating the column type&quot;&quot;&quot;</span>
+        <span class="n">GenericColumn</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">diameter</span><span class="p">,</span> <span class="n">porosity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columnType</span> <span class="o">=</span> <span class="s2">&quot;EDM with Linear isotherm&quot;</span>
+
+<div class="viewcode-block" id="LinColumn.init"><a class="viewcode-back" href="../../SMB.html#SMB.LinColumn.LinColumn.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flowRate</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Nx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the LinColumn with given flow rate, time step, and number of elements&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowRate</span> <span class="o">=</span> <span class="n">flowRate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span> <span class="o">=</span> <span class="n">Nx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowSpeed</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flowRate</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">diameter</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">porosity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span>  <span class="c1"># Calculating space step [mm]</span>
+
+        <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">comp</span><span class="o">.</span><span class="n">disperCoef</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">porosity</span><span class="p">)</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">henryConst</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">porosity</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">disperCoef</span><span class="p">))</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowSpeed</span> <span class="o">/</span> <span class="n">comp</span><span class="o">.</span><span class="n">disperCoef</span>
+
+            <span class="c1"># Crank-Nicolson matrixes preparation</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">Nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span><span class="p">))</span>  <span class="c1"># A matrix data structure</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">Nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span><span class="p">))</span>  <span class="c1"># B matrix data structure</span>
+
+            <span class="c1"># Preparation of boundaries in matrix A</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)))</span>  <span class="c1"># Left boundary</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))))</span>  <span class="c1"># Left boundary</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))))</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># Right boundary</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">((</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)))</span>  <span class="c1"># Right Boundary</span>
+
+            <span class="c1"># Preparation of boundaries in matrix B</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowSpeed</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))))</span>  <span class="c1"># Left boundary</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">((</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))))</span>  <span class="c1"># Right boundary</span>
+
+            <span class="c1"># Filling up Matrixes A and B</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">dt</span> <span class="o">/</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">/</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">C2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+
+            <span class="n">comp</span><span class="o">.</span><span class="n">A_diag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagonal_form</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">Aabs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">Babs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>
+
+            <span class="c1"># Initializes result matrix in component with zeroes if not yet present</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">):</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LinColumn.step"><a class="viewcode-back" href="../../SMB.html#SMB.LinColumn.LinColumn.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cins</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform a step in the LinColumn by solving the system of equations&quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">comp</span><span class="p">,</span> <span class="n">cin</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">cins</span><span class="p">):</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flowSpeed</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">*</span> <span class="n">cin</span><span class="p">)</span>  <span class="c1"># From left boundary</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">solve_banded</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">comp</span><span class="o">.</span><span class="n">A_diag</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="LinColumn.diagonal_form"><a class="viewcode-back" href="../../SMB.html#SMB.LinColumn.LinColumn.diagonal_form">[docs]</a>    <span class="k">def</span> <span class="nf">diagonal_form</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms banded matrix into diagonal ordered form</span>
+<span class="sd">           allows using scipy.linalg.solve_banded</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)))</span>
+        <span class="n">ab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">ab</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">ab</span><span class="p">[(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">mid_row_inx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ab</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">upper_rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">mid_row_inx</span> <span class="o">-</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">upper_rows</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="n">upper_rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mid_row_inx</span><span class="p">)</span>
+        <span class="n">lower_rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">mid_row_inx</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lower</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">keep_rows</span> <span class="o">=</span> <span class="n">upper_rows</span> <span class="o">+</span> <span class="n">lower_rows</span>
+        <span class="n">ab</span> <span class="o">=</span> <span class="n">ab</span><span class="p">[</span><span class="n">keep_rows</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">return</span> <span class="n">ab</span></div>
+
+<div class="viewcode-block" id="LinColumn.deepCopy"><a class="viewcode-back" href="../../SMB.html#SMB.LinColumn.LinColumn.deepCopy">[docs]</a>    <span class="k">def</span> <span class="nf">deepCopy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a deep copy of the LinColumn object&quot;&quot;&quot;</span>
+        <span class="n">copy</span> <span class="o">=</span> <span class="n">LinColumn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diameter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">porosity</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">columnType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columnType</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">flowRate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowRate</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">Nx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nx</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">flowSpeed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowSpeed</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">comp</span><span class="p">,</span> <span class="n">copycomp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">components</span><span class="p">):</span>
+            <span class="n">copycomp</span><span class="o">.</span><span class="n">C1</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">C1</span>
+            <span class="n">copycomp</span><span class="o">.</span><span class="n">C2</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">C2</span>
+            <span class="n">copycomp</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+            <span class="n">copycomp</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>
+            <span class="n">copycomp</span><span class="o">.</span><span class="n">A_diag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">A_diag</span><span class="p">)</span>
+            <span class="n">copycomp</span><span class="o">.</span><span class="n">Aabs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">Aabs</span><span class="p">)</span>
+            <span class="n">copycomp</span><span class="o">.</span><span class="n">Babs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">Babs</span><span class="p">)</span>
+            <span class="n">copycomp</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">copy</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SMB-Sim</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">SMB-Sim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../SMB.html">SMB package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Adam Svoboda.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

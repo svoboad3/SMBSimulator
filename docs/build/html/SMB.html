@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SMB package &#8212; SMB-Sim 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="SMB-Sim" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="smb-package">
+<h1>SMB package<a class="headerlink" href="#smb-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-SMB.Component">
+<span id="smb-component-module"></span><h2>SMB.Component module<a class="headerlink" href="#module-SMB.Component" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SMB.Component.Component">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SMB.Component.</span></span><span class="sig-name descname"><span class="pre">Component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Component.html#Component"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Component.Component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing component of separating mixture</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.Component.Component.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Component.html#Component.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Component.Component.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a copy of the Component object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.Component.Component.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Component.html#Component.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Component.Component.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the Component object with the values from another Component object</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-SMB.GenericColumn">
+<span id="smb-genericcolumn-module"></span><h2>SMB.GenericColumn module<a class="headerlink" href="#module-SMB.GenericColumn" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SMB.GenericColumn.GenericColumn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SMB.GenericColumn.</span></span><span class="sig-name descname"><span class="pre">GenericColumn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">porosity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/GenericColumn.html#GenericColumn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.GenericColumn.GenericColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract class from which all column classes should inherit</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.GenericColumn.GenericColumn.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/GenericColumn.html#GenericColumn.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.GenericColumn.GenericColumn.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a component to the column’s components list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.GenericColumn.GenericColumn.deepCopy">
+<span class="sig-name descname"><span class="pre">deepCopy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/GenericColumn.html#GenericColumn.deepCopy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.GenericColumn.GenericColumn.deepCopy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a deep copy of the GenericColumn object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.GenericColumn.GenericColumn.delByIdx">
+<span class="sig-name descname"><span class="pre">delByIdx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/GenericColumn.html#GenericColumn.delByIdx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.GenericColumn.GenericColumn.delByIdx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a component from the column’s components list at the given index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.GenericColumn.GenericColumn.getInfo">
+<span class="sig-name descname"><span class="pre">getInfo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/GenericColumn.html#GenericColumn.getInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.GenericColumn.GenericColumn.getInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary containing information about the column</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.GenericColumn.GenericColumn.init">
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flowRate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/GenericColumn.html#GenericColumn.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.GenericColumn.GenericColumn.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method, initialize the column with given flow rate, time step, and number of elements</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.GenericColumn.GenericColumn.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/GenericColumn.html#GenericColumn.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.GenericColumn.GenericColumn.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method, perform a step in the column’s simulation based on given inputs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.GenericColumn.GenericColumn.updateByIdx">
+<span class="sig-name descname"><span class="pre">updateByIdx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/GenericColumn.html#GenericColumn.updateByIdx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.GenericColumn.GenericColumn.updateByIdx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a component in the column’s components list at the given index with a new component</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-SMB.LinColumn">
+<span id="smb-lincolumn-module"></span><h2>SMB.LinColumn module<a class="headerlink" href="#module-SMB.LinColumn" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SMB.LinColumn.LinColumn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SMB.LinColumn.</span></span><span class="sig-name descname"><span class="pre">LinColumn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">porosity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/LinColumn.html#LinColumn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.LinColumn.LinColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#SMB.GenericColumn.GenericColumn" title="SMB.GenericColumn.GenericColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericColumn</span></code></a></p>
+<p>Implementation of column using equilibrium dispersion model with linear isotherm</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.LinColumn.LinColumn.deepCopy">
+<span class="sig-name descname"><span class="pre">deepCopy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/LinColumn.html#LinColumn.deepCopy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.LinColumn.LinColumn.deepCopy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a deep copy of the LinColumn object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.LinColumn.LinColumn.diagonal_form">
+<span class="sig-name descname"><span class="pre">diagonal_form</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/LinColumn.html#LinColumn.diagonal_form"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.LinColumn.LinColumn.diagonal_form" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms banded matrix into diagonal ordered form
+allows using scipy.linalg.solve_banded</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.LinColumn.LinColumn.init">
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flowRate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/LinColumn.html#LinColumn.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.LinColumn.LinColumn.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the LinColumn with given flow rate, time step, and number of elements</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.LinColumn.LinColumn.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/LinColumn.html#LinColumn.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.LinColumn.LinColumn.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a step in the LinColumn by solving the system of equations</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-SMB.NonlinColumn">
+<span id="smb-nonlincolumn-module"></span><h2>SMB.NonlinColumn module<a class="headerlink" href="#module-SMB.NonlinColumn" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SMB.NonlinColumn.NonLinColumn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SMB.NonlinColumn.</span></span><span class="sig-name descname"><span class="pre">NonLinColumn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">porosity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/NonlinColumn.html#NonLinColumn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.NonlinColumn.NonLinColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#SMB.GenericColumn.GenericColumn" title="SMB.GenericColumn.GenericColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericColumn</span></code></a></p>
+<p>Implementation of column using equilibrium dispersion model with Langmuir isotherm</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.NonlinColumn.NonLinColumn.deepCopy">
+<span class="sig-name descname"><span class="pre">deepCopy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/NonlinColumn.html#NonLinColumn.deepCopy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.NonlinColumn.NonLinColumn.deepCopy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a deep copy of the NonLinColumn object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.NonlinColumn.NonLinColumn.function">
+<span class="sig-name descname"><span class="pre">function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feedCur</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">porosity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">langmuirConst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saturCoef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disperCoef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flowSpeed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/NonlinColumn.html#NonLinColumn.function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.NonlinColumn.NonLinColumn.function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function solving matrix row for given input, used in optimization</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.NonlinColumn.NonLinColumn.init">
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flowRate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/NonlinColumn.html#NonLinColumn.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.NonlinColumn.NonLinColumn.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the NonlinColumn with given flow rate, time step, and number of elements</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.NonlinColumn.NonLinColumn.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/NonlinColumn.html#NonLinColumn.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.NonlinColumn.NonLinColumn.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a step in the NonlinColumn by solving the system of equations</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-SMB.SMBStation">
+<span id="smb-smbstation-module"></span><h2>SMB.SMBStation module<a class="headerlink" href="#module-SMB.SMBStation" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SMB.SMBStation.</span></span><span class="sig-name descname"><span class="pre">SMBStation</span></span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing SMB Station
+Contains Columns, Tubes and Components</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.addColZone">
+<span class="sig-name descname"><span class="pre">addColZone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tube</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.addColZone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.addColZone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a column and a tube before it to a specific zone</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.createComponent">
+<span class="sig-name descname"><span class="pre">createComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feedConc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">henryConst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disperCoef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">langmuirConst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saturCoef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.createComponent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.createComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a component and add it to the SMB station</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.deepCopy">
+<span class="sig-name descname"><span class="pre">deepCopy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.deepCopy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.deepCopy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a deep copy of the SMBStation object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.delColZone">
+<span class="sig-name descname"><span class="pre">delColZone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.delColZone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.delColZone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a column and a tube before it from a specific zone</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.delComponent">
+<span class="sig-name descname"><span class="pre">delComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.delComponent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.delComponent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.getColInfo">
+<span class="sig-name descname"><span class="pre">getColInfo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.getColInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.getColInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get information about each column in each zone</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.getCompInfo">
+<span class="sig-name descname"><span class="pre">getCompInfo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.getCompInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.getCompInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get information about each component</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.getSettingsInfo">
+<span class="sig-name descname"><span class="pre">getSettingsInfo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.getSettingsInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.getSettingsInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get information about the settings of the station</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.getZoneReady">
+<span class="sig-name descname"><span class="pre">getZoneReady</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.getZoneReady"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.getZoneReady" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all zones have at least one column</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.initCols">
+<span class="sig-name descname"><span class="pre">initCols</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.initCols"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.initCols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the columns in the SMB station</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.rotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate the columns in the SMB station based on the switch interval</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.setFlowRateZone">
+<span class="sig-name descname"><span class="pre">setFlowRateZone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flowRate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.setFlowRateZone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.setFlowRateZone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set flow rate for a specific zone</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.setNx">
+<span class="sig-name descname"><span class="pre">setNx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Nx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.setNx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.setNx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the number of grid points for the simulation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.setPorosity">
+<span class="sig-name descname"><span class="pre">setPorosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">porosity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.setPorosity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.setPorosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the porosity of all the columns in the SMB station</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.setSwitchInterval">
+<span class="sig-name descname"><span class="pre">setSwitchInterval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.setSwitchInterval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.setSwitchInterval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set switch interval for column rotation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.setdt">
+<span class="sig-name descname"><span class="pre">setdt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.setdt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.setdt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the time step for the simulation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform one or more simulation steps on all collumns and connecting them</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.updateComponentByIndex">
+<span class="sig-name descname"><span class="pre">updateComponentByIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feedConc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">henryConst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disperCoef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">langmuirConst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saturCoef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.updateComponentByIndex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.updateComponentByIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the properties of a component based on its index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.SMBStation.SMBStation.updateComponentByName">
+<span class="sig-name descname"><span class="pre">updateComponentByName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feedConc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">henryConst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disperCoef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">langmuirConst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saturCoef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/SMBStation.html#SMBStation.updateComponentByName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.SMBStation.SMBStation.updateComponentByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the properties of a component based on its name</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-SMB.Tube">
+<span id="smb-tube-module"></span><h2>SMB.Tube module<a class="headerlink" href="#module-SMB.Tube" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SMB.Tube.Tube">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SMB.Tube.</span></span><span class="sig-name descname"><span class="pre">Tube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deadVolume</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Tube.html#Tube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Tube.Tube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing connecting tube between columns</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.Tube.Tube.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Tube.html#Tube.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Tube.Tube.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a component to the tube</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.Tube.Tube.deepCopy">
+<span class="sig-name descname"><span class="pre">deepCopy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Tube.html#Tube.deepCopy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Tube.Tube.deepCopy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a deep copy of the Tube object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.Tube.Tube.delByIdx">
+<span class="sig-name descname"><span class="pre">delByIdx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Tube.html#Tube.delByIdx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Tube.Tube.delByIdx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a component from the tube based on its index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.Tube.Tube.getInfo">
+<span class="sig-name descname"><span class="pre">getInfo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Tube.html#Tube.getInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Tube.Tube.getInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get information about the tube</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.Tube.Tube.init">
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flowRate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummyVal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Tube.html#Tube.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Tube.Tube.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the tube with flow rate, time step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.Tube.Tube.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Tube.html#Tube.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Tube.Tube.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a step in the tube with input concentrations</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SMB.Tube.Tube.updateByIdx">
+<span class="sig-name descname"><span class="pre">updateByIdx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SMB/Tube.html#Tube.updateByIdx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SMB.Tube.Tube.updateByIdx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a component in the tube based on its index</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-SMB">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-SMB" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SMB-Sim</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">SMB-Sim</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SMB package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SMB package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-SMB.Component">SMB.Component module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-SMB.GenericColumn">SMB.GenericColumn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-SMB.LinColumn">SMB.LinColumn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-SMB.NonlinColumn">SMB.NonlinColumn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-SMB.SMBStation">SMB.SMBStation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-SMB.Tube">SMB.Tube module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-SMB">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">SMB-Sim</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">SMB-Sim</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Adam Svoboda.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/SMB.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

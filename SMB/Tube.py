@@ -1,28 +1,33 @@
 import numpy as np
 import scipy.interpolate as spi
 
-# Class representing connecting tube between columns
 class Tube:
+    """Class representing connecting tube between columns
+    Contains:
+    deadVolume (float) - Volume of the tube.
+    columnType (string) - Description of the object.
+    components (list) - List of components.
+    """
     def __init__(self, deadVolume):
-        # Initialize Tube object with a dead volume
+        """Initialize Tube object with a dead volume"""
         self.deadVolume = deadVolume
         self.columnType = "Connecting Tube"
         self.components = []
 
     def add(self, comp):
-        # Add a component to the tube
+        """Add a component to the tube"""
         self.components.append(comp)
 
     def delByIdx(self, idx):
-        # Delete a component from the tube based on its index
+        """Delete a component from the tube based on its index"""
         del self.components[idx]
 
     def updateByIdx(self, idx, comp):
-        # Update a component in the tube based on its index
+        """Update a component in the tube based on its index"""
         self.components[idx].update(comp)
 
     def init(self, flowRate, dt, dummyVal=0):
-        # Initialize the tube with flow rate, time step, and optional dummy value
+        """Initialize the tube with flow rate, time step"""
         self.flowRate = flowRate
         self.dt = dt
         self.t = (self.deadVolume / self.flowRate) * 3600
@@ -49,7 +54,7 @@ class Tube:
                 comp.c = cnew
 
     def step(self, cins):
-        # Perform a step in the tube with input concentrations
+        """Perform a step in the tube with input concentrations"""
         output = []
         for comp, cin in zip(self.components, cins):
             comp.c = np.roll(comp.c, 1)
@@ -58,14 +63,14 @@ class Tube:
         return output
 
     def getInfo(self):
-        # Get information about the tube
+        """Get information about the tube"""
         info = {}
         info["columnType"] = self.columnType
         info["deadVolume"] = self.deadVolume
         return info
 
     def deepCopy(self):
-        # Create a deep copy of the Tube object
+        """Create a deep copy of the Tube object"""
         copy = Tube(self.deadVolume)
         copy.columnType = self.columnType
         copy.flowRate = self.flowRate

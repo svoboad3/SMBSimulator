@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>main module &#8212; SMB-Sim 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SMB-Sim" href="modules.html" />
+    <link rel="prev" title="Usage" href="usage.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-main">
+<span id="main-module"></span><h1>main module<a class="headerlink" href="#module-main" title="Permalink to this heading">¶</a></h1>
+<p>Class implementing web server logic, including communication with Data Service and Databus and time control of simulation</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="main.User">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">User</span></span><a class="reference internal" href="_modules/main.html#User"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">UserMixin</span></code></p>
+<p>User class for flask_login</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.add_column">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#add_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.add_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds column to SMB station from form data in request</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.add_component">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">add_component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#add_component"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.add_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds components to SMB station from form data in request</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.calculate_latest_time_point">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">calculate_latest_time_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#calculate_latest_time_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.calculate_latest_time_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates latest time point of live data, used for time synchronization with simulation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.calculate_purity_and_yield">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">calculate_purity_and_yield</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#calculate_purity_and_yield"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.calculate_purity_and_yield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates purity and yield of simulation and live data</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.check_dataservice_connection">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">check_dataservice_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cookies</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#check_dataservice_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.check_dataservice_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if connection to Data Service</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.convert_data">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">convert_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#convert_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.convert_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a response object to return and saves data to online memory object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.delete_column">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">delete_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#delete_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.delete_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP delete response function for /column/&lt;zone&gt;/&lt;idx&gt;, removes column to smb station</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.delete_component">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">delete_component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#delete_component"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.delete_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP delete response function for /smbstation/components/&lt;idx&gt;, removes component</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.delete_simulation_data">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">delete_simulation_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#delete_simulation_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.delete_simulation_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP delete response function for /smbstation/components/simconfig/simulation, deletes simulation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.fix_flowrates">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">fix_flowrates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#fix_flowrates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.fix_flowrates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates flow rate in zones from flow rates of input streams</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_PLC_tags">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_PLC_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cookies</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_PLC_tags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_PLC_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts variables objects to list of tags</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_PLC_variables">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_PLC_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cookies</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_PLC_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_PLC_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends request to Data Service REST api, returning variables object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_SMB">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_SMB</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_SMB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_SMB" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /offline/smbstation, returns smb station page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_SMB_config">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_SMB_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_SMB_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_SMB_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /offline/smbstation/components/simconfig, returns simulation definition page for offline sim</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_SMB_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_SMB_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_SMB_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_SMB_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/smbstation, returns smb station page of online sim</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_components">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_components"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /offline/smbstation/components, response with offline adding components page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_components_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_components_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_components_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_components_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/smbstation/components, response with online adding components page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_data_all">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_data_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_data_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_data_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends request to Data Service REST api, returning values of given tag starting in given time</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_data_single">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_data_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookies</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_data_single"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_data_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends request to Data Service REST api, returning latest values of given tag</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_dataservice_connection">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_dataservice_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_dataservice_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_dataservice_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/connection, returns if Data Service connection is live</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_export">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_export</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_export"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_export" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /offline/smbstation/components/simconfig/export, responses with json string of sim settings</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_import">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_import</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_import"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_import" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /offline/import, responses with offline import page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_import_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_import_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_import_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_import_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/import, responses with online import page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_login_page">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_login_page</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_login_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_login_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get and post response function for /login, returns login page and logs in user</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_main_page">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_main_page</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_main_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_main_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /, returns main page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_new_horizon_data">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_new_horizon_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_new_horizon_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_new_horizon_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_new_live_data">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_new_live_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extlabels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raflabels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_new_live_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_new_live_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all live data from given time labels</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_online_plcmaping">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_online_plcmaping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_online_plcmaping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_online_plcmaping" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/smbstation/components/plcmaping, returns tag mapping page for online sim</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_pe_import">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_pe_import</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_pe_import"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_pe_import" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /offline/peimport, returns offline import page for parameter estimator string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_pe_import_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_pe_import_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_pe_import_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_pe_import_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/peimport, returns online import page for parameter estimator string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_simulation">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_simulation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /offline/smbstation/components/simconfig/simulation, response offline sim page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_simulation_offline_data">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_simulation_offline_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_simulation_offline_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_simulation_offline_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /offline/smbstation/components/simconfig/simulation/data, responses with offline sim data</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_simulation_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_simulation_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_simulation_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_simulation_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/smbstation/components/simconfig/simulation, responses with online simulation page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_simulation_online_change_commit">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_simulation_online_change_commit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_simulation_online_change_commit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_simulation_online_change_commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/smbstation/components/simconfig/simulation/changesCommited, responses with whether changes time period already ran out</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_simulation_online_data">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_simulation_online_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_simulation_online_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_simulation_online_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /online/smbstation/components/simconfig/simulation/data, responses with online data and updates latest labels</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_simulation_online_init">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_simulation_online_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_simulation_online_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_simulation_online_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/smbstation/components/simconfig/simulation/initData, initializes data objects and returns online data</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_simulation_online_purity_and_yield">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_simulation_online_purity_and_yield</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_simulation_online_purity_and_yield"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_simulation_online_purity_and_yield" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /online/smbstation/components/simconfig/simulation/purityandyield, responses with purity and yield information</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.load_user">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">load_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#load_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.load_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>User loader for flask_login</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.login_to_Dataservice">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_to_Dataservice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">un</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_to_Dataservice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_to_Dataservice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login to Data Service using direct login, returning authentication token and expire time if successful</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.logout">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#logout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP get response function for /logout, logs out user</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="main.mqtt_sequence">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">mqtt_sequence</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#main.mqtt_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>client = mqtt.Client()
+client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
+client.on_connect = on_connect
+client.on_message = on_message
+client.connect(MQTT_IP, port=MQTT_PORT)
+client.subscribe(TOPIC2)
+client.loop_start()</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.on_connect">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">on_connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#on_connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.on_connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function called on successful MQTT connection</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.on_message">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">on_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#on_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.on_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function called on received message from MQTT connection
+It reads tag ids and creates a tag-id map</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.online_init">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">online_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#online_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.online_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes all the data objects</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.periodic_task">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">periodic_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#periodic_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.periodic_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap function calling given fucntion periodicaly</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_add_column">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_add_column</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_add_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_add_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /offline/column, adds column to smb station</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_add_column_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_add_column_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_add_column_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_add_column_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>http post response function for /online/column, adds column to smb station</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_add_component">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_add_component</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_add_component"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_add_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /offline/smbstation/components, imports components from form</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_add_component_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_add_component_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_add_component_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_add_component_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /online/smbstation/components, imports components from form</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_create_SMB">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_create_SMB</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_create_SMB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_create_SMB" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /offline/smbstation/components/simconfig, creates simulation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_import">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_import</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_import"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_import" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /offline/import, imports settings from import string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_import_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_import_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_import_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_import_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /online/import, imports settings from import string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_online_plcmaping">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_online_plcmaping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_online_plcmaping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_online_plcmaping" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /online/smbstation/components/plcmaping, maps tags to sim parameters and initializes sim</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_pe_import">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_pe_import</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_pe_import"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_pe_import" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /offline/peimport, imports settings from import string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_pe_import_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_pe_import_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_pe_import_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_pe_import_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>http post response function for /online/peimport, imports settings from import string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_simulation_change_keep_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_simulation_change_keep_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_simulation_change_keep_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_simulation_change_keep_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /online/smbstation/components/simconfig/simulation/change/keep, keeps “soft” updade</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_simulation_change_notkeep_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_simulation_change_notkeep_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_simulation_change_notkeep_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_simulation_change_notkeep_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /online/smbstation/components/simconfig/simulation/change/notkeep, rollback “soft” updade</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_simulation_change_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_simulation_change_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_simulation_change_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_simulation_change_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /online/smbstation/components/simconfig/simulation/change, “soft” updates online sim parameters</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_simulation_flowrate">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_simulation_flowrate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_simulation_flowrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_simulation_flowrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /offline/smbstation/components/simconfig/simulation/flowrate, updates flow rates of smb station</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_simulation_force_change_online">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_simulation_force_change_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_simulation_force_change_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_simulation_force_change_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /online/smbstation/components/simconfig/simulation/forcechange, “force” updates online sim parameters</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.post_simulation_switch">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">post_simulation_switch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#post_simulation_switch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.post_simulation_switch" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP post response function for /offline/smbstation/components/simconfig/simulation/switch, updates switch interval of smb station</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.request_loader">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">request_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#request_loader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.request_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request loader for flask_login</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.send_to_PLC">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">send_to_PLC</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#send_to_PLC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.send_to_PLC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish parameter update message to mqtt client</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.unauthorized_handler">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">unauthorized_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#unauthorized_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.unauthorized_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unauthorized handler for flask_login</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.update_feed_concentrations">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">update_feed_concentrations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#update_feed_concentrations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.update_feed_concentrations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates feed concentrations of SMB station</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.update_live_data">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">update_live_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cookies</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#update_live_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.update_live_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function updating all data, getting newest values from Data Service and calling step on SMB station</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.update_online_memory">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">update_online_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">responseDict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#update_online_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.update_online_memory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves data into online memory object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.update_station">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">update_station</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#update_station"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.update_station" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates flow rates of SMB station</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SMB-Sim</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">main module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#main.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.add_column"><code class="docutils literal notranslate"><span class="pre">add_column()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.add_component"><code class="docutils literal notranslate"><span class="pre">add_component()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.calculate_latest_time_point"><code class="docutils literal notranslate"><span class="pre">calculate_latest_time_point()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.calculate_purity_and_yield"><code class="docutils literal notranslate"><span class="pre">calculate_purity_and_yield()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.check_dataservice_connection"><code class="docutils literal notranslate"><span class="pre">check_dataservice_connection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.convert_data"><code class="docutils literal notranslate"><span class="pre">convert_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.delete_column"><code class="docutils literal notranslate"><span class="pre">delete_column()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.delete_component"><code class="docutils literal notranslate"><span class="pre">delete_component()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.delete_simulation_data"><code class="docutils literal notranslate"><span class="pre">delete_simulation_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.fix_flowrates"><code class="docutils literal notranslate"><span class="pre">fix_flowrates()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_PLC_tags"><code class="docutils literal notranslate"><span class="pre">get_PLC_tags()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_PLC_variables"><code class="docutils literal notranslate"><span class="pre">get_PLC_variables()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_SMB"><code class="docutils literal notranslate"><span class="pre">get_SMB()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_SMB_config"><code class="docutils literal notranslate"><span class="pre">get_SMB_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_SMB_online"><code class="docutils literal notranslate"><span class="pre">get_SMB_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_components"><code class="docutils literal notranslate"><span class="pre">get_components()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_components_online"><code class="docutils literal notranslate"><span class="pre">get_components_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_data_all"><code class="docutils literal notranslate"><span class="pre">get_data_all()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_data_single"><code class="docutils literal notranslate"><span class="pre">get_data_single()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_dataservice_connection"><code class="docutils literal notranslate"><span class="pre">get_dataservice_connection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_export"><code class="docutils literal notranslate"><span class="pre">get_export()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_import"><code class="docutils literal notranslate"><span class="pre">get_import()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_import_online"><code class="docutils literal notranslate"><span class="pre">get_import_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_login_page"><code class="docutils literal notranslate"><span class="pre">get_login_page()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_main_page"><code class="docutils literal notranslate"><span class="pre">get_main_page()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_new_horizon_data"><code class="docutils literal notranslate"><span class="pre">get_new_horizon_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_new_live_data"><code class="docutils literal notranslate"><span class="pre">get_new_live_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_online_plcmaping"><code class="docutils literal notranslate"><span class="pre">get_online_plcmaping()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_pe_import"><code class="docutils literal notranslate"><span class="pre">get_pe_import()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_pe_import_online"><code class="docutils literal notranslate"><span class="pre">get_pe_import_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_simulation"><code class="docutils literal notranslate"><span class="pre">get_simulation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_simulation_offline_data"><code class="docutils literal notranslate"><span class="pre">get_simulation_offline_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_simulation_online"><code class="docutils literal notranslate"><span class="pre">get_simulation_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_simulation_online_change_commit"><code class="docutils literal notranslate"><span class="pre">get_simulation_online_change_commit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_simulation_online_data"><code class="docutils literal notranslate"><span class="pre">get_simulation_online_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_simulation_online_init"><code class="docutils literal notranslate"><span class="pre">get_simulation_online_init()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.get_simulation_online_purity_and_yield"><code class="docutils literal notranslate"><span class="pre">get_simulation_online_purity_and_yield()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.load_user"><code class="docutils literal notranslate"><span class="pre">load_user()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.login_to_Dataservice"><code class="docutils literal notranslate"><span class="pre">login_to_Dataservice()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.logout"><code class="docutils literal notranslate"><span class="pre">logout()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.mqtt_sequence"><code class="docutils literal notranslate"><span class="pre">mqtt_sequence</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.on_connect"><code class="docutils literal notranslate"><span class="pre">on_connect()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.on_message"><code class="docutils literal notranslate"><span class="pre">on_message()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.online_init"><code class="docutils literal notranslate"><span class="pre">online_init()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.periodic_task"><code class="docutils literal notranslate"><span class="pre">periodic_task()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_add_column"><code class="docutils literal notranslate"><span class="pre">post_add_column()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_add_column_online"><code class="docutils literal notranslate"><span class="pre">post_add_column_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_add_component"><code class="docutils literal notranslate"><span class="pre">post_add_component()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_add_component_online"><code class="docutils literal notranslate"><span class="pre">post_add_component_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_create_SMB"><code class="docutils literal notranslate"><span class="pre">post_create_SMB()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_import"><code class="docutils literal notranslate"><span class="pre">post_import()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_import_online"><code class="docutils literal notranslate"><span class="pre">post_import_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_online_plcmaping"><code class="docutils literal notranslate"><span class="pre">post_online_plcmaping()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_pe_import"><code class="docutils literal notranslate"><span class="pre">post_pe_import()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_pe_import_online"><code class="docutils literal notranslate"><span class="pre">post_pe_import_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_simulation_change_keep_online"><code class="docutils literal notranslate"><span class="pre">post_simulation_change_keep_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_simulation_change_notkeep_online"><code class="docutils literal notranslate"><span class="pre">post_simulation_change_notkeep_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_simulation_change_online"><code class="docutils literal notranslate"><span class="pre">post_simulation_change_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_simulation_flowrate"><code class="docutils literal notranslate"><span class="pre">post_simulation_flowrate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_simulation_force_change_online"><code class="docutils literal notranslate"><span class="pre">post_simulation_force_change_online()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.post_simulation_switch"><code class="docutils literal notranslate"><span class="pre">post_simulation_switch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.request_loader"><code class="docutils literal notranslate"><span class="pre">request_loader()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.send_to_PLC"><code class="docutils literal notranslate"><span class="pre">send_to_PLC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.unauthorized_handler"><code class="docutils literal notranslate"><span class="pre">unauthorized_handler()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.update_feed_concentrations"><code class="docutils literal notranslate"><span class="pre">update_feed_concentrations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.update_live_data"><code class="docutils literal notranslate"><span class="pre">update_live_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.update_online_memory"><code class="docutils literal notranslate"><span class="pre">update_online_memory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main.update_station"><code class="docutils literal notranslate"><span class="pre">update_station()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">SMB-Sim</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="SMB.html">SMB package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">main module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SMB.html">SMB package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="usage.html" title="previous chapter">Usage</a></li>
+      <li>Next: <a href="modules.html" title="next chapter">SMB-Sim</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Adam Svoboda.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/main.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

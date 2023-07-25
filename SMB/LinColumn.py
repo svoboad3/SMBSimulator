@@ -3,15 +3,17 @@ import math
 from scipy import linalg
 from SMB.GenericColumn import GenericColumn
 
-# Implementation of column using equilibrium dispersion model with linear isotherm
 class LinColumn(GenericColumn):
+    """Implementation of column using equilibrium dispersion model with linear isotherm.
+    Inherites from GenericColumn abstract class.
+    """
     def __init__(self, length, diameter, porosity):
-        # Initialize LinColumn object by calling the parent class constructor and updating the column type
+        """Initialize LinColumn object by calling the parent class constructor and updating the column type"""
         GenericColumn.__init__(self, length, diameter, porosity)
         self.columnType = "EDM with Linear isotherm"
 
     def init(self, flowRate, dt, Nx):
-        # Initialize the LinColumn with given flow rate, time step, and number of elements
+        """Initialize the LinColumn with given flow rate, time step, and number of elements"""
         self.flowRate = flowRate
         self.Nx = Nx
         self.dt = dt
@@ -55,7 +57,7 @@ class LinColumn(GenericColumn):
                 comp.c = np.zeros(len(self.x))
 
     def step(self, cins):
-        # Perform a step in the LinColumn by solving the system of equations
+        """Perform a step in the LinColumn by solving the system of equations"""
         output = []
         for comp, cin in zip(self.components, cins):
             b = comp.B.dot(comp.c)
@@ -65,8 +67,9 @@ class LinColumn(GenericColumn):
         return output
 
     def diagonal_form(self, a, lower=1, upper=1):
-        # Transforms banded matrix into diagonal ordered form
-        # allows using scipy.linalg.solve_banded
+        """Transforms banded matrix into diagonal ordered form
+           allows using scipy.linalg.solve_banded
+        """
         n = a.shape[1]
         assert (np.all(a.shape == (n, n)))
         ab = np.zeros((2 * n - 1, n))
@@ -84,7 +87,7 @@ class LinColumn(GenericColumn):
         return ab
 
     def deepCopy(self):
-        # Create a deep copy of the LinColumn object
+        """Create a deep copy of the LinColumn object"""
         copy = LinColumn(self.length, self.diameter, self.porosity)
         copy.columnType = self.columnType
         copy.flowRate = self.flowRate

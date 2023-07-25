@@ -4,12 +4,16 @@ from scipy import optimize
 from SMB.GenericColumn import GenericColumn
 
 class NonLinColumn(GenericColumn):
+    """Implementation of column using equilibrium dispersion model with Langmuir isotherm
+    Inherites from GenericColumn abstract class.
+    """
     def __init__(self, length, diameter, porosity):
+        """Initialize NonlinColumn object by calling the parent class constructor and updating the column type"""
         GenericColumn.__init__(self, length, diameter, porosity)
         self.columnType = "EDM with Noncompetetive Langmuir isotherm"
 
     def init(self, flowRate, dt, Nx):
-        # Initialize column parameters
+        """Initialize the NonlinColumn with given flow rate, time step, and number of elements"""
         self.flowRate = flowRate
         self.Nx = Nx
         self.dt = dt
@@ -28,7 +32,7 @@ class NonLinColumn(GenericColumn):
 
 
     def step(self, cins):
-        # Perform a step in the NonlinColumn by solving the system of equations
+        """Perform a step in the NonlinColumn by solving the system of equations"""
         output = []
         for comp, cin in zip(self.components, cins):
             # Solve the system of equations for each component
@@ -41,7 +45,7 @@ class NonLinColumn(GenericColumn):
         return output
 
     def function(self, c1, c0, feedCur, porosity, langmuirConst, saturCoef, disperCoef, flowSpeed):
-        # Function solving matrix row for given input, used in optimization
+        """Function solving matrix row for given input, used in optimization"""
         f = np.zeros(len(c0))  # Preparation of solution vector - will be optimized to 0
         for i in range(0, len(c0)):  # Main loop through all the vector's elements
             if i == 0:  # Left boundary
@@ -65,7 +69,7 @@ class NonLinColumn(GenericColumn):
         return f
 
     def deepCopy(self):
-        # Create a deep copy of the NonLinColumn object
+        """Create a deep copy of the NonLinColumn object"""
         copy = NonLinColumn(self.length, self.diameter, self.porosity)
         copy.columnType = self.columnType
         copy.flowRate = self.flowRate

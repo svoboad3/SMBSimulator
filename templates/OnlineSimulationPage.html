@@ -161,7 +161,7 @@
         if(outputCharts.length == 0)
             await initCanvases()
         printInitData()
-        dataIntervalHandler = setInterval(getData, {{formInfo['dt']}}*1000, "{{url_for('get_simulation_online_data')}}")
+        dataIntervalHandler = setInterval(getData, 10000, "{{url_for('get_simulation_online_data')}}")
         purityAndYieldHandler = setInterval(get_purity_and_yield, 20000, "{{url_for('get_simulation_online_purity_and_yield')}}")
     }
     async function getData(link){

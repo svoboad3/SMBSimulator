@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SMB.Tube &#8212; SMB-Sim 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for SMB.Tube</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">spi</span>
+
+<div class="viewcode-block" id="Tube"><a class="viewcode-back" href="../../SMB.html#SMB.Tube.Tube">[docs]</a><span class="k">class</span> <span class="nc">Tube</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing connecting tube between columns&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deadVolume</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize Tube object with a dead volume&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deadVolume</span> <span class="o">=</span> <span class="n">deadVolume</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columnType</span> <span class="o">=</span> <span class="s2">&quot;Connecting Tube&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Tube.add"><a class="viewcode-back" href="../../SMB.html#SMB.Tube.Tube.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a component to the tube&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Tube.delByIdx"><a class="viewcode-back" href="../../SMB.html#SMB.Tube.Tube.delByIdx">[docs]</a>    <span class="k">def</span> <span class="nf">delByIdx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a component from the tube based on its index&quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Tube.updateByIdx"><a class="viewcode-back" href="../../SMB.html#SMB.Tube.Tube.updateByIdx">[docs]</a>    <span class="k">def</span> <span class="nf">updateByIdx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">comp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update a component in the tube based on its index&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Tube.init"><a class="viewcode-back" href="../../SMB.html#SMB.Tube.Tube.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flowRate</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">dummyVal</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the tube with flow rate, time step&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowRate</span> <span class="o">=</span> <span class="n">flowRate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deadVolume</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowRate</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3600</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deadSteps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">remainder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+        <span class="k">if</span> <span class="n">remainder</span> <span class="o">&gt;=</span> <span class="n">dt</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deadSteps</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">):</span>
+                <span class="c1"># Initializes concentration vector if not yet present</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deadSteps</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Recalculates length and concentrations of vector when flow rate or time step changes</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">))</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">spi</span><span class="o">.</span><span class="n">CubicSpline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+                <span class="n">xnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">deadSteps</span><span class="p">)</span>
+                <span class="n">cnew</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">xnew</span><span class="p">)</span>
+                <span class="n">intgOld</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+                <span class="n">intgNew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">cnew</span><span class="p">,</span> <span class="n">xnew</span><span class="p">)</span>
+                <span class="n">massDiff</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">intgNew</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">massDiff</span> <span class="o">=</span> <span class="n">intgOld</span> <span class="o">/</span> <span class="n">intgNew</span>
+                <span class="n">cnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">cnew</span><span class="p">,</span> <span class="n">massDiff</span><span class="p">)</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">cnew</span></div>
+
+<div class="viewcode-block" id="Tube.step"><a class="viewcode-back" href="../../SMB.html#SMB.Tube.Tube.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cins</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform a step in the tube with input concentrations&quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">comp</span><span class="p">,</span> <span class="n">cin</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">cins</span><span class="p">):</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cin</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="Tube.getInfo"><a class="viewcode-back" href="../../SMB.html#SMB.Tube.Tube.getInfo">[docs]</a>    <span class="k">def</span> <span class="nf">getInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get information about the tube&quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;columnType&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columnType</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;deadVolume&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deadVolume</span>
+        <span class="k">return</span> <span class="n">info</span></div>
+
+<div class="viewcode-block" id="Tube.deepCopy"><a class="viewcode-back" href="../../SMB.html#SMB.Tube.Tube.deepCopy">[docs]</a>    <span class="k">def</span> <span class="nf">deepCopy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a deep copy of the Tube object&quot;&quot;&quot;</span>
+        <span class="n">copy</span> <span class="o">=</span> <span class="n">Tube</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deadVolume</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">columnType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columnType</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">flowRate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowRate</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">deadSteps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deadSteps</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">comp</span><span class="p">,</span> <span class="n">copycomp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">components</span><span class="p">):</span>
+            <span class="n">copycomp</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">copy</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SMB-Sim</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">SMB-Sim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../SMB.html">SMB package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Adam Svoboda.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

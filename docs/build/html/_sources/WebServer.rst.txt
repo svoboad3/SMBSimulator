@@ -1,0 +1,29 @@
+WebServer package
+=================
+
+Submodules
+----------
+
+WebServer.WebServer module
+--------------------------
+
+.. automodule:: WebServer.WebServer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+WebServer.config module
+-----------------------
+
+.. automodule:: WebServer.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: WebServer
+   :members:
+   :undoc-members:
+   :show-inheritance:

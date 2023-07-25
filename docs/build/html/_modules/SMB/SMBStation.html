@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SMB.SMBStation &#8212; SMB-Sim 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for SMB.SMBStation</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">SMB.GenericColumn</span> <span class="kn">import</span> <span class="n">GenericColumn</span>
+<span class="kn">from</span> <span class="nn">SMB.Component</span> <span class="kn">import</span> <span class="n">Component</span>
+<span class="kn">import</span> <span class="nn">copy</span> <span class="k">as</span> <span class="nn">cp</span>
+
+<div class="viewcode-block" id="SMBStation"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation">[docs]</a><span class="k">class</span> <span class="nc">SMBStation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing SMB Station</span>
+<span class="sd">       Contains Columns, Tubes and Components</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize attributes&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Dictionary to store zones and their columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Columns in zone 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Columns in zone 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Columns in zone 3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Columns in zone 4</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cins</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Dictionary to store inlet concentrations for each zone</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Inlet concentrations for zone 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Inlet concentrations for zone 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Inlet concentrations for zone 3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Inlet concentrations for zone 4</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Dictionary to store flow rates for each zone</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Flow rate for zone 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Flow rate for zone 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Flow rate for zone 3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Flow rate for zone 4</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">outVals</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List to store outlet concentrations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Dictionary to store simulation settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List to store components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">switchingEnabled</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Flag to indicate if column rotation is enabled</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Switch interval for column rotation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">countdown</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Countdown timer for column rotation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Timer for simulation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Number of columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">switchState</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Current state of column rotation</span>
+
+<div class="viewcode-block" id="SMBStation.setFlowRateZone"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.setFlowRateZone">[docs]</a>    <span class="k">def</span> <span class="nf">setFlowRateZone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zone</span><span class="p">,</span> <span class="n">flowRate</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set flow rate for a specific zone&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span> <span class="o">=</span> <span class="n">flowRate</span></div>
+
+<div class="viewcode-block" id="SMBStation.setSwitchInterval"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.setSwitchInterval">[docs]</a>    <span class="k">def</span> <span class="nf">setSwitchInterval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set switch interval for column rotation&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">countdown</span> <span class="o">=</span> <span class="n">s</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">switchingEnabled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">switchingEnabled</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="SMBStation.setdt"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.setdt">[docs]</a>    <span class="k">def</span> <span class="nf">setdt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time step for the simulation&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span></div>
+
+<div class="viewcode-block" id="SMBStation.setNx"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.setNx">[docs]</a>    <span class="k">def</span> <span class="nf">setNx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Nx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the number of grid points for the simulation&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;Nx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Nx</span></div>
+
+<div class="viewcode-block" id="SMBStation.addColZone"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.addColZone">[docs]</a>    <span class="k">def</span> <span class="nf">addColZone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zone</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">tube</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a column and a tube before it to a specific zone&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+            <span class="n">col</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+            <span class="n">tube</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tube</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colCount</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="SMBStation.delColZone"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.delColZone">[docs]</a>    <span class="k">def</span> <span class="nf">delColZone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zone</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a column and a tube before it from a specific zone&quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">idx</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">][</span><span class="n">idx</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">idx</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colCount</span> <span class="o">-=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="SMBStation.createComponent"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.createComponent">[docs]</a>    <span class="k">def</span> <span class="nf">createComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">feedConc</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">henryConst</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">disperCoef</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">langmuirConst</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">saturCoef</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a component and add it to the SMB station&quot;&quot;&quot;</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Component</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">feedConc</span> <span class="o">=</span> <span class="n">feedConc</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">henryConst</span> <span class="o">=</span> <span class="n">henryConst</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">disperCoef</span> <span class="o">=</span> <span class="n">disperCoef</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">langmuirConst</span> <span class="o">=</span> <span class="n">langmuirConst</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">saturCoef</span> <span class="o">=</span> <span class="n">saturCoef</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]:</span>
+                <span class="n">col</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="SMBStation.delComponent"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.delComponent">[docs]</a>    <span class="k">def</span> <span class="nf">delComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="c1"># Delete a component from the SMB station</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]:</span>
+                <span class="n">col</span><span class="o">.</span><span class="n">delByIdx</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SMBStation.updateComponentByName"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.updateComponentByName">[docs]</a>    <span class="k">def</span> <span class="nf">updateComponentByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">feedConc</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">henryConst</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">disperCoef</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">langmuirConst</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">saturCoef</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the properties of a component based on its name&quot;&quot;&quot;</span>
+        <span class="c1"># Finds component with given name and updates it</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">comp</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">feedConc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">comp</span><span class="o">.</span><span class="n">feedConc</span> <span class="o">=</span> <span class="n">feedConc</span>
+                <span class="k">if</span> <span class="n">henryConst</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">comp</span><span class="o">.</span><span class="n">henryConst</span> <span class="o">=</span> <span class="n">henryConst</span>
+                <span class="k">if</span> <span class="n">disperCoef</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">comp</span><span class="o">.</span><span class="n">disperCoef</span> <span class="o">=</span> <span class="n">disperCoef</span>
+                <span class="k">if</span> <span class="n">langmuirConst</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">comp</span><span class="o">.</span><span class="n">langmuirConst</span> <span class="o">=</span> <span class="n">langmuirConst</span>
+                <span class="k">if</span> <span class="n">saturCoef</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">comp</span><span class="o">.</span><span class="n">saturCoef</span> <span class="o">=</span> <span class="n">saturCoef</span>
+                <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]:</span>
+                        <span class="n">col</span><span class="o">.</span><span class="n">updateByIdx</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="c1"># Creates component if it doesn&#39;t exists</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Component</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">feedConc</span> <span class="o">=</span> <span class="n">feedConc</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">henryConst</span> <span class="o">=</span> <span class="n">henryConst</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">disperCoef</span> <span class="o">=</span> <span class="n">disperCoef</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">langmuirConst</span> <span class="o">=</span> <span class="n">langmuirConst</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">saturCoef</span> <span class="o">=</span> <span class="n">saturCoef</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]:</span>
+                <span class="n">col</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="SMBStation.updateComponentByIndex"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.updateComponentByIndex">[docs]</a>    <span class="k">def</span> <span class="nf">updateComponentByIndex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">feedConc</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">henryConst</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">disperCoef</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">langmuirConst</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">saturCoef</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the properties of a component based on its index&quot;&quot;&quot;</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">feedConc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">feedConc</span> <span class="o">=</span> <span class="n">feedConc</span>
+        <span class="k">if</span> <span class="n">henryConst</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">henryConst</span> <span class="o">=</span> <span class="n">henryConst</span>
+        <span class="k">if</span> <span class="n">disperCoef</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">disperCoef</span> <span class="o">=</span> <span class="n">disperCoef</span>
+        <span class="k">if</span> <span class="n">langmuirConst</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">langmuirConst</span> <span class="o">=</span> <span class="n">langmuirConst</span>
+        <span class="k">if</span> <span class="n">saturCoef</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">saturCoef</span> <span class="o">=</span> <span class="n">saturCoef</span>
+        <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]:</span>
+                <span class="n">col</span><span class="o">.</span><span class="n">updateByIdx</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SMBStation.setPorosity"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.setPorosity">[docs]</a>    <span class="k">def</span> <span class="nf">setPorosity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">porosity</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the porosity of all the columns in the SMB station&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">GenericColumn</span><span class="p">):</span>
+                    <span class="n">col</span><span class="o">.</span><span class="n">porosity</span> <span class="o">=</span> <span class="n">porosity</span></div>
+
+<div class="viewcode-block" id="SMBStation.initCols"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.initCols">[docs]</a>    <span class="k">def</span> <span class="nf">initCols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the columns in the SMB station&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]):</span>
+                <span class="n">col</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">[</span><span class="n">zone</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;Nx&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">[</span><span class="n">zone</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">components</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">outVals</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">components</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SMBStation.step"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform one or more simulation steps on all collumns and connecting them&quot;&quot;&quot;</span>
+        <span class="n">cins</span> <span class="o">=</span> <span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">feedConc</span> <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]):</span>
+                    <span class="n">inVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">[</span><span class="n">zone</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">[</span><span class="n">zone</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outVals</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">outVals</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">zone</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">inVal</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inVals</span><span class="p">):</span>
+                            <span class="n">inVals</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">inVal</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="p">(</span><span class="n">cins</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span><span class="o">/</span><span class="n">col</span><span class="o">.</span><span class="n">flowRate</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">zone</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">inVal</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inVals</span><span class="p">):</span>
+                            <span class="n">inVals</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">inVal</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">col</span><span class="o">.</span><span class="n">flowRate</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">inVals</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">x1</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">outVals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">res</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">switchingEnabled</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">countdown</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">countdown</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">countdown</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rotate</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="SMBStation.rotate"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rotate the columns in the SMB station based on the switch interval&quot;&quot;&quot;</span>
+        <span class="n">tmptube</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">tmpcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmptube</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmpcol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initCols</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">switchState</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">switchState</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">colCount</span></div>
+
+<div class="viewcode-block" id="SMBStation.getColInfo"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.getColInfo">[docs]</a>    <span class="k">def</span> <span class="nf">getColInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get information about each column in each zone&quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+            <span class="n">info</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]:</span>
+                <span class="n">info</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">getInfo</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">info</span></div>
+
+<div class="viewcode-block" id="SMBStation.getCompInfo"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.getCompInfo">[docs]</a>    <span class="k">def</span> <span class="nf">getCompInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get information about each component&quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+            <span class="n">info</span><span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">info</span><span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;Feed Concentration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">feedConc</span>
+            <span class="n">info</span><span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;Henry Constant&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">henryConst</span>
+            <span class="n">info</span><span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;Langmuir Constant&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">langmuirConst</span>
+            <span class="n">info</span><span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;Saturation Coefficient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">saturCoef</span>
+            <span class="n">info</span><span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;Dispersion Coefficient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">disperCoef</span>
+        <span class="k">return</span> <span class="n">info</span></div>
+
+<div class="viewcode-block" id="SMBStation.getZoneReady"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.getZoneReady">[docs]</a>    <span class="k">def</span> <span class="nf">getZoneReady</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if all zones have at least one column&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="SMBStation.getSettingsInfo"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.getSettingsInfo">[docs]</a>    <span class="k">def</span> <span class="nf">getSettingsInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get information about the settings of the station&quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;Flow Rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span>
+        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>
+        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;Nx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;Nx&#39;</span><span class="p">]</span>
+        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;Switch Interval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span>
+        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;Countdown&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">countdown</span>
+        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;timer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span>
+        <span class="k">return</span> <span class="n">info</span></div>
+
+<div class="viewcode-block" id="SMBStation.deepCopy"><a class="viewcode-back" href="../../SMB.html#SMB.SMBStation.SMBStation.deepCopy">[docs]</a>    <span class="k">def</span> <span class="nf">deepCopy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a deep copy of the SMBStation object&quot;&quot;&quot;</span>
+        <span class="n">copy</span> <span class="o">=</span> <span class="n">SMBStation</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]:</span>
+                <span class="n">copy</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">zone</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">deepCopy</span><span class="p">())</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">cins</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cins</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">flowRates</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flowRates</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">outVals</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outVals</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">[</span><span class="n">comp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">]</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">outVals</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outVals</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">switchingEnabled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">switchingEnabled</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">colCount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">colCount</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">switchState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">switchState</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">countdown</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">countdown</span>
+        <span class="k">return</span> <span class="n">copy</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SMB-Sim</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">SMB-Sim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../SMB.html">SMB package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Adam Svoboda.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
